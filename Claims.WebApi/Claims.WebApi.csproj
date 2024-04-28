@@ -6,6 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\net7.0\Claims.WebApi.xml</DocumentationFile>
+  </PropertyGroup>
   <ItemGroup>
     <None Remove="Controllers\" />
     <None Remove="Validators\" />

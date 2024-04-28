@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text.Json.Serialization;
 using Claims.Repositories;
 using Claims.Repositories.Auditing;
@@ -6,7 +7,6 @@ using Claims.Services;
 using Claims.WebApi.Contracts;
 using Claims.WebApi.Validators;
 using FluentValidation;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 
@@ -55,7 +55,14 @@ builder.Services.AddTransient<IValidator<CreateCoverRequest>, CoverRequestValida
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    var contractsXmlPath = Path.Combine(AppContext.BaseDirectory, "Claims.WebApi.xml");
+    var controllersXmlFile = Path.Combine(AppContext.BaseDirectory, "Claims.WebApi.Contracts.xml");
+
+    c.IncludeXmlComments(contractsXmlPath, true);
+    c.IncludeXmlComments(controllersXmlFile, true);
+});
 
 var app = builder.Build();
 

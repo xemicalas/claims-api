@@ -9,10 +9,12 @@
   <ItemGroup>
     <None Remove="Migrations\" />
     <None Remove="Auditing\" />
+    <None Remove="Repositories\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Migrations\" />
     <Folder Include="Auditing\" />
+    <Folder Include="Repositories\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.18">
@@ -20,8 +22,10 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.18" />
+    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.34.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Claims.Repositories.Contracts\Claims.Repositories.Contracts.csproj" />
+    <ProjectReference Include="..\Claims.Domain\Claims.Domain.csproj" />
   </ItemGroup>
 </Project>

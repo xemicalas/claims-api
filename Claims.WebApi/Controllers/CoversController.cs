@@ -79,7 +79,7 @@ public class CoversController : ControllerBase
     public async Task<ActionResult> CreateAsync(CreateCoverRequest cover)
     {
         var coverId = await _coversService.CreateCoverAsync(cover.Adapt<Cover>());
-        await _auditerService.AuditCover(coverId, "POST");
+        await _auditerService.AuditCoverAsync(coverId, "POST");
 
         return Ok(cover);
     }
@@ -95,7 +95,7 @@ public class CoversController : ControllerBase
         try
         {
             await _coversService.DeleteCoverAsync(id);
-            await _auditerService.AuditCover(id, "DELETE");
+            await _auditerService.AuditCoverAsync(id, "DELETE");
 
             return NoContent();
         }

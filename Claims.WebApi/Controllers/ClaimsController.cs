@@ -64,7 +64,7 @@ namespace Claims.Controllers
         public async Task<ActionResult> CreateAsync(CreateClaimRequest claim)
         {
             var claimId = await _claimsService.CreateClaimAsync(claim.Adapt<Claim>());
-            await _auditerService.AuditClaim(claimId, "POST");
+            await _auditerService.AuditClaimAsync(claimId, "POST");
 
             return Ok(claim);
         }
@@ -80,7 +80,7 @@ namespace Claims.Controllers
             try
             {
                 await _claimsService.DeleteClaimAsync(id);
-                await _auditerService.AuditClaim(id, "DELETE");
+                await _auditerService.AuditClaimAsync(id, "DELETE");
 
                 return NoContent();
             }

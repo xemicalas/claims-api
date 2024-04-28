@@ -77,6 +77,5 @@ public class CoversController : ControllerBase
         {
             return NotFound();
         }
-
     }
 }

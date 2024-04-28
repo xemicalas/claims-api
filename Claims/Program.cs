@@ -3,6 +3,9 @@ using Claims.Repositories;
 using Claims.Repositories.Auditing;
 using Claims.Repositories.Repositories;
 using Claims.Services;
+using Claims.WebApi.Contracts;
+using Claims.WebApi.Validators;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 
@@ -42,6 +45,11 @@ builder.Services.AddScoped<ICoversService, CoversService>();
 builder.Services.AddScoped<IClaimsService, ClaimsService>();
 builder.Services.AddScoped<IAuditerService, AuditerService>();
 builder.Services.AddSingleton<IPremiumComputeService, PremiumComputeService>();
+
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
+builder.Services.AddTransient<IValidator<CreateClaimRequest>, ClaimRequestValidator>();
+builder.Services.AddTransient<IValidator<CreateCoverRequest>, CoverRequestValidator>();
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -21,7 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Claims.Repositories", "Clai
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Claims.Repositories.Contracts", "Claims.Repositories.Contracts\Claims.Repositories.Contracts.csproj", "{D99CC148-9B36-4EA8-AB85-86F194DB5C44}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Claims.Domain", "Claims.Domain\Claims.Domain.csproj", "{1DB75EE7-4460-43D1-9F1D-2C1384F57EC3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Claims.Domain.Contracts", "Claims.Domain\Claims.Domain.Contracts.csproj", "{1DB75EE7-4460-43D1-9F1D-2C1384F57EC3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

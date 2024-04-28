@@ -24,6 +24,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Claims.WebApi.Contracts\Claims.WebApi.Contracts.csproj" />
     <ProjectReference Include="..\Claims.Services\Claims.Services.csproj" />
-    <ProjectReference Include="..\Claims.Domain\Claims.Domain.csproj" />
+    <ProjectReference Include="..\Claims.Domain\Claims.Domain.Contracts.csproj" />
   </ItemGroup>
 </Project>

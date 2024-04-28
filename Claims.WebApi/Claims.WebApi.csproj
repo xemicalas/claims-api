@@ -15,11 +15,11 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.8" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.34.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Claims.Repositories\Claims.Repositories.csproj" />
     <ProjectReference Include="..\Claims.WebApi.Contracts\Claims.WebApi.Contracts.csproj" />
+    <ProjectReference Include="..\Claims.Services\Claims.Services.csproj" />
+    <ProjectReference Include="..\Claims.Domain\Claims.Domain.csproj" />
   </ItemGroup>
 </Project>

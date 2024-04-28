@@ -4,36 +4,37 @@ using Microsoft.Azure.Cosmos;
 
 namespace Claims.Repositories.Repositories
 {
-    public class ClaimsRepository : IClaimsRepository
+    public class CoversRepository : ICoversRepository
 	{
         private readonly Container _container;
 
-        public ClaimsRepository(Container container)
+        public CoversRepository(Container container)
 		{
             if (container == null) throw new ArgumentNullException(nameof(container));
             _container = container;
-		}
-
-        public Task CreateClaimAsync(ClaimEntity claim)
-        {
-            return _container.CreateItemAsync(claim, new PartitionKey(claim.Id));
         }
 
-        public Task DeleteClaimAsync(string id)
+        public Task CreateCoverAsync(CoverEntity cover)
         {
-            return _container.DeleteItemAsync<ClaimEntity>(id, new PartitionKey(id));
+            return _container.CreateItemAsync(cover, new PartitionKey(cover.Id));
         }
 
-        public async Task<ClaimEntity> GetClaimAsync(string id)
+        public Task DeleteCoverAsync(string id)
+        {
+            return _container.DeleteItemAsync<CoverEntity>(id, new(id));
+        }
+
+        public async Task<CoverEntity> GetCoverAsync(string id)
         {
             try
             {
-                var response = await _container.ReadItemAsync<ClaimEntity>(id, new PartitionKey(id));
+                var response = await _container.ReadItemAsync<CoverEntity>(id, new(id));
                 return response.Resource;
+
             }
             catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                throw new ClaimNotFoundException();
+                throw new CoverNotFoundException();
             }
             catch (Exception)
             {
@@ -41,10 +42,10 @@ namespace Claims.Repositories.Repositories
             }
         }
 
-        public async Task<IEnumerable<ClaimEntity>> GetClaimsAsync()
+        public async Task<IEnumerable<CoverEntity>> GetCoversAsync()
         {
-            var query = _container.GetItemQueryIterator<ClaimEntity>(new QueryDefinition("SELECT * FROM c"));
-            var results = new List<ClaimEntity>();
+            var query = _container.GetItemQueryIterator<CoverEntity>(new QueryDefinition("SELECT * FROM c"));
+            var results = new List<CoverEntity>();
             while (query.HasMoreResults)
             {
                 var response = await query.ReadNextAsync();

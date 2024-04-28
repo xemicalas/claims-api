@@ -6,4 +6,22 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Migrations\" />
+    <None Remove="Auditing\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+    <Folder Include="Auditing\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.18">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.18" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Claims.Repositories.Contracts\Claims.Repositories.Contracts.csproj" />
+  </ItemGroup>
 </Project>

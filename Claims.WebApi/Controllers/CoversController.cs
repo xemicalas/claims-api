@@ -1,6 +1,7 @@
 using Claims.Auditing;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.Logging;
 
 namespace Claims.Controllers;
 

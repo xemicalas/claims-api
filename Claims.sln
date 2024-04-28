@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Claims.Services", "Claims.S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Claims.Repositories", "Claims.Repositories\Claims.Repositories.csproj", "{1C9651F4-5651-490A-88D8-755EA74909EC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Claims.Repositories.Contracts", "Claims.Repositories.Contracts\Claims.Repositories.Contracts.csproj", "{D99CC148-9B36-4EA8-AB85-86F194DB5C44}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{1C9651F4-5651-490A-88D8-755EA74909EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C9651F4-5651-490A-88D8-755EA74909EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C9651F4-5651-490A-88D8-755EA74909EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D99CC148-9B36-4EA8-AB85-86F194DB5C44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D99CC148-9B36-4EA8-AB85-86F194DB5C44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D99CC148-9B36-4EA8-AB85-86F194DB5C44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D99CC148-9B36-4EA8-AB85-86F194DB5C44}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

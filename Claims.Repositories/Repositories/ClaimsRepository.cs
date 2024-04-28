@@ -1,57 +1,50 @@
-﻿using Claims.Domain.Exceptions;
-using Claims.Repositories.Contracts;
-using Microsoft.Azure.Cosmos;
+﻿using Claims.Repositories.Contracts;
+using Microsoft.EntityFrameworkCore;
+using MongoDB.EntityFrameworkCore.Extensions;
 
 namespace Claims.Repositories.Repositories
 {
-    public class ClaimsRepository : IClaimsRepository
+    public class ClaimsRepository : DbContext, IClaimsRepository
 	{
-        private readonly Container _container;
+        private DbSet<ClaimEntity> Claims { get; init; }
 
-        public ClaimsRepository(Container container)
+        public ClaimsRepository(DbContextOptions options)
+            : base(options)
 		{
-            if (container == null) throw new ArgumentNullException(nameof(container));
-            _container = container;
 		}
 
-        public Task CreateClaimAsync(ClaimEntity claim)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            return _container.CreateItemAsync(claim, new PartitionKey(claim.Id));
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<ClaimEntity>().ToCollection("claims");
         }
 
-        public Task DeleteClaimAsync(string id)
+        public async Task CreateClaimAsync(ClaimEntity claim)
         {
-            return _container.DeleteItemAsync<ClaimEntity>(id, new PartitionKey(id));
+            Claims.Add(claim);
+            await SaveChangesAsync();
+        }
+
+        public async Task DeleteClaimAsync(string id)
+        {
+            var claim = await GetClaimAsync(id);
+            if (claim is not null)
+            {
+                Claims.Remove(claim);
+                await SaveChangesAsync();
+            }
         }
 
         public async Task<ClaimEntity> GetClaimAsync(string id)
         {
-            try
-            {
-                var response = await _container.ReadItemAsync<ClaimEntity>(id, new PartitionKey(id));
-                return response.Resource;
-            }
-            catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
-                throw new ClaimNotFoundException();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            return await Claims
+                .Where(claim => claim.Id == id)
+                .SingleOrDefaultAsync();
         }
 
         public async Task<IEnumerable<ClaimEntity>> GetClaimsAsync()
         {
-            var query = _container.GetItemQueryIterator<ClaimEntity>(new QueryDefinition("SELECT * FROM c"));
-            var results = new List<ClaimEntity>();
-            while (query.HasMoreResults)
-            {
-                var response = await query.ReadNextAsync();
-
-                results.AddRange(response.ToList());
-            }
-            return results;
+            return await Claims.ToListAsync();
         }
     }
 }

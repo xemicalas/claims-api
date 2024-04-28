@@ -20,8 +20,8 @@ namespace Claims.Services
         {
             var coverId = Guid.NewGuid().ToString();
             var premium = _premiumComputeService.ComputePremium(cover.StartDate, cover.EndDate, cover.Type);
-            cover.SetId(coverId);
-            cover.SetPremium(premium);
+            cover.Id = coverId;
+            cover.Premium = premium;
 
             await _coversRepository.CreateCoverAsync(cover.Adapt<CoverEntity>());
 

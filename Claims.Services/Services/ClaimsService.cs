@@ -17,7 +17,7 @@ namespace Claims.Services
         public async Task<string> CreateClaimAsync(Claim claim)
         {
             var claimId = Guid.NewGuid().ToString();
-            claim.SetId(claimId);
+            claim.Id = claimId;
 
             await _claimsRepository.CreateClaimAsync(claim.Adapt<ClaimEntity>());
 

@@ -24,13 +24,24 @@ public class CoversController : ControllerBase
         _auditerService = auditerService;
         _premiumComputeService = premiumComputeService;
     }
-    
+
+    /// <summary>
+    /// Computes premium by date intervals and coverType
+    /// </summary>
+    /// <param name="startDate">Cover's start date</param>
+    /// <param name="endDate">Cover's end date</param>
+    /// <param name="coverType">Cover type</param>
+    /// <returns>Calculated premium amount</returns>
     [HttpPost("/ComputePremium")]
     public ActionResult ComputePremiumAsync(DateOnly startDate, DateOnly endDate, CoverType coverType)
     {
         return Ok(_premiumComputeService.ComputePremium(startDate, endDate, coverType));
     }
 
+    /// <summary>
+    /// Gets all created covers
+    /// </summary>
+    /// <returns>List of covers</returns>
     [HttpGet]
     public async Task<ActionResult<IEnumerable<GetCoverResponse>>> GetAsync()
     {
@@ -39,6 +50,11 @@ public class CoversController : ControllerBase
         return Ok(covers.Adapt<IEnumerable<GetCoverResponse>>());
     }
 
+    /// <summary>
+    /// Gets single cover by cover identifier
+    /// </summary>
+    /// <param name="id">Cover identifier</param>
+    /// <returns>Cover object</returns>
     [HttpGet("{id}")]
     public async Task<ActionResult<GetCoverResponse>> GetAsync(string id)
     {
@@ -54,6 +70,11 @@ public class CoversController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Creates cover by provided properties
+    /// </summary>
+    /// <param name="cover">Cover object</param>
+    /// <returns>Created cover object</returns>
     [HttpPost]
     public async Task<ActionResult> CreateAsync(CreateCoverRequest cover)
     {
@@ -63,6 +84,11 @@ public class CoversController : ControllerBase
         return Ok(cover);
     }
 
+    /// <summary>
+    /// Deletes created cover
+    /// </summary>
+    /// <param name="id">Cover identifier</param>
+    /// <returns></returns>
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteAsync(string id)
     {

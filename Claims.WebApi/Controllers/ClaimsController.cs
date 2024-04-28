@@ -23,6 +23,10 @@ namespace Claims.Controllers
             _auditerService = auditerService;
         }
 
+        /// <summary>
+        /// Gets all awailable created claims
+        /// </summary>
+        /// <returns>List of claims</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GetClaimResponse>>> GetAsync()
         {
@@ -31,6 +35,11 @@ namespace Claims.Controllers
             return Ok(claims.Adapt<IEnumerable<GetClaimResponse>>());
         }
 
+        /// <summary>
+        /// Gets claim by claim identifier
+        /// </summary>
+        /// <param name="id">Claim identifier</param>
+        /// <returns>Claim response</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<GetClaimResponse>> GetAsync(string id)
         {
@@ -46,6 +55,11 @@ namespace Claims.Controllers
             }
         }
 
+        /// <summary>
+        /// Creates claim by provided properties
+        /// </summary>
+        /// <param name="claim">Claim object</param>
+        /// <returns>Created claim object</returns>
         [HttpPost]
         public async Task<ActionResult> CreateAsync(CreateClaimRequest claim)
         {
@@ -55,6 +69,11 @@ namespace Claims.Controllers
             return Ok(claim);
         }
 
+        /// <summary>
+        /// Deletes created claim
+        /// </summary>
+        /// <param name="id">Claim identifier</param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAsync(string id)
         {

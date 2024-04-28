@@ -6,6 +6,7 @@ using Claims.Services;
 using Claims.WebApi.Contracts;
 using Claims.WebApi.Validators;
 using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 
@@ -46,8 +47,8 @@ builder.Services.AddScoped<IClaimsService, ClaimsService>();
 builder.Services.AddScoped<IAuditerService, AuditerService>();
 builder.Services.AddSingleton<IPremiumComputeService, PremiumComputeService>();
 
-builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddFluentValidationClientsideAdapters();
+builder.Services.AddValidatorsFromAssemblyContaining<ClaimRequestValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CoverRequestValidator>();
 builder.Services.AddTransient<IValidator<CreateClaimRequest>, ClaimRequestValidator>();
 builder.Services.AddTransient<IValidator<CreateCoverRequest>, CoverRequestValidator>();
 

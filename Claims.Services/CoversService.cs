@@ -3,12 +3,12 @@ using Claims.Repositories;
 
 namespace Claims.Services
 {
-    public class CoverService : ICoversService
+    public class CoversService : ICoversService
 	{
         private readonly ICoversRepository _coversRepository;
         private readonly IPremiumComputeService _premiumComputeService;
 
-        public CoverService(ICoversRepository coversRepository, IPremiumComputeService premiumComputeService)
+        public CoversService(ICoversRepository coversRepository, IPremiumComputeService premiumComputeService)
 		{
             _coversRepository = coversRepository;
             _premiumComputeService = premiumComputeService;

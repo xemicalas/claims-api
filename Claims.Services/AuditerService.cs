@@ -13,12 +13,12 @@ namespace Claims.Services
 
         public Task AuditClaim(string id, string httpRequestType)
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
 
         public Task AuditCover(string id, string httpRequestType)
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

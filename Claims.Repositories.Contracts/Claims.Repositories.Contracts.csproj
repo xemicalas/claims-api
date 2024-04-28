@@ -9,4 +9,7 @@
   <ItemGroup>
     <PackageReference Include="MongoDB.EntityFrameworkCore" Version="7.0.0-preview.1" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Claims.Domain\Claims.Domain.Contracts.csproj" />
+  </ItemGroup>
 </Project>

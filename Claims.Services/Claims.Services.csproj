@@ -9,5 +9,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Claims.Repositories\Claims.Repositories.csproj" />
     <ProjectReference Include="..\Claims.Repositories.Contracts\Claims.Repositories.Contracts.csproj" />
+    <ProjectReference Include="..\Claims.Domain\Claims.Domain.Contracts.csproj" />
   </ItemGroup>
 </Project>

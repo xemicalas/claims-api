@@ -8,7 +8,7 @@ namespace Claims.Repositories.Repositories
 	{
         public DbSet<CoverEntity> Covers { get; init; }
 
-        public CoversRepository(DbContextOptions options)
+        public CoversRepository(DbContextOptions<CoversRepository> options)
             : base(options)
 		{
         }

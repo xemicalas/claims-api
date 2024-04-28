@@ -1,4 +1,4 @@
-﻿using Claims.Domain.Exceptions;
+﻿using Claims.Domain.Contracts.Exceptions;
 using Claims.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.EntityFrameworkCore.Extensions;

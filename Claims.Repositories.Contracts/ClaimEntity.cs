@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using Claims.Domain.Contracts;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Claims.Repositories.Contracts
 {

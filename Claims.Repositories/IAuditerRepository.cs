@@ -1,4 +1,4 @@
-﻿namespace Claims.Repositories.Repositories
+﻿namespace Claims.Repositories
 {
     public interface IAuditerRepository
     {

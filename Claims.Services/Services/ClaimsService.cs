@@ -1,4 +1,4 @@
-﻿using Claims.Domain;
+﻿using Claims.Domain.Contracts;
 using Claims.Repositories;
 using Claims.Repositories.Contracts;
 using Mapster;
@@ -14,9 +14,14 @@ namespace Claims.Services
 			_claimsRepository = claimsRepository;
 		}
 
-        public Task CreateClaimAsync(Claim item)
+        public async Task<string> CreateClaimAsync(Claim claim)
         {
-            return _claimsRepository.CreateClaimAsync(item.Adapt<ClaimEntity>());
+            var claimId = Guid.NewGuid().ToString();
+            claim.SetId(claimId);
+
+            await _claimsRepository.CreateClaimAsync(claim.Adapt<ClaimEntity>());
+
+            return claimId;
         }
 
         public Task DeleteClaimAsync(string id)

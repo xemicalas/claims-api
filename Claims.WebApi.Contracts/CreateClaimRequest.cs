@@ -1,20 +1,18 @@
-﻿using Newtonsoft.Json;
+﻿using Claims.Domain.Contracts;
+using Newtonsoft.Json;
 
-namespace Claims
+namespace Claims.WebApi.Contracts
 {
-    public class Claim
+    public class CreateClaimRequest
     {
-        [JsonProperty(PropertyName = "id")]
-        public string ?Id { get; set; }
-
         [JsonProperty(PropertyName = "coverId")]
-        public string CoverId { get; set; } = null!;
+        public required string CoverId { get; set; }
 
         [JsonProperty(PropertyName = "created")]
         public DateTime Created { get; set; }
 
         [JsonProperty(PropertyName = "name")]
-        public string Name { get; set; } = null!;
+        public required string Name { get; set; }
 
         [JsonProperty(PropertyName = "claimType")]
         public ClaimType Type { get; set; }

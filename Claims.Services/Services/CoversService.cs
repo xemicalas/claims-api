@@ -1,4 +1,4 @@
-﻿using Claims.Domain;
+﻿using Claims.Domain.Contracts;
 using Claims.Repositories;
 using Claims.Repositories.Contracts;
 using Mapster;
@@ -16,11 +16,16 @@ namespace Claims.Services
             _premiumComputeService = premiumComputeService;
         }
 
-        public Task CreateCoverAsync(Cover cover)
+        public async Task<string> CreateCoverAsync(Cover cover)
         {
+            var coverId = Guid.NewGuid().ToString();
             var premium = _premiumComputeService.ComputePremium(cover.StartDate, cover.EndDate, cover.Type);
+            cover.SetId(coverId);
             cover.SetPremium(premium);
-            return _coversRepository.CreateCoverAsync(cover.Adapt<CoverEntity>());
+
+            await _coversRepository.CreateCoverAsync(cover.Adapt<CoverEntity>());
+
+            return coverId;
         }
 
         public Task DeleteCoverAsync(string id)

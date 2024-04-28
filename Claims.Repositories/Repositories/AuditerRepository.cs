@@ -1,4 +1,5 @@
-﻿using Claims.Auditing;
+﻿using Claims.Repositories.Auditing;
+using Claims.Repositories.Contracts;
 
 namespace Claims.Repositories.Repositories
 {

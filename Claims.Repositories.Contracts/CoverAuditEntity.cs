@@ -1,4 +1,4 @@
-﻿namespace Claims.Auditing
+﻿namespace Claims.Repositories.Contracts
 {
     public class CoverAuditEntity
     {

@@ -1,4 +1,6 @@
-﻿namespace Claims.Services
+﻿using Claims.Domain.Contracts;
+
+namespace Claims.Services
 {
     public interface IPremiumComputeService
     {

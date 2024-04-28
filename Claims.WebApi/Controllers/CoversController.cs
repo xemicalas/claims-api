@@ -1,5 +1,7 @@
-using Claims.Domain.Exceptions;
+using Claims.Domain.Contracts;
+using Claims.Domain.Contracts.Exceptions;
 using Claims.Services;
+using Claims.WebApi.Contracts;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -30,21 +32,21 @@ public class CoversController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Cover>>> GetAsync()
+    public async Task<ActionResult<IEnumerable<GetCoverResponse>>> GetAsync()
     {
         var covers = await _coversService.GetCoversAsync();
 
-        return Ok(covers.Adapt<IEnumerable<Cover>>());
+        return Ok(covers.Adapt<IEnumerable<GetCoverResponse>>());
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Cover>> GetAsync(string id)
+    public async Task<ActionResult<GetCoverResponse>> GetAsync(string id)
     {
         try
         {
             var cover = await _coversService.GetCoverAsync(id);
 
-            return Ok(cover.Adapt<Cover>());
+            return Ok(cover.Adapt<GetCoverResponse>());
         }
         catch (CoverNotFoundException)
         {
@@ -53,15 +55,10 @@ public class CoversController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> CreateAsync(Cover cover)
+    public async Task<ActionResult> CreateAsync(CreateCoverRequest cover)
     {
-        if (cover.Id == null)
-        {
-            cover.Id = Guid.NewGuid().ToString();
-        }
-        
-        await _coversService.CreateCoverAsync(cover.Adapt<Domain.Cover>());
-        await _auditerService.AuditCover(cover.Id, "POST");
+        var coverId = await _coversService.CreateCoverAsync(cover.Adapt<Cover>());
+        await _auditerService.AuditCover(coverId, "POST");
 
         return Ok(cover);
     }

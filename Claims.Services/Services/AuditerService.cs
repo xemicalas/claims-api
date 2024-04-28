@@ -1,4 +1,4 @@
-﻿using Claims.Repositories.Repositories;
+﻿using Claims.Repositories;
 
 namespace Claims.Services
 {

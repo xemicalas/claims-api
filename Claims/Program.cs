@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
-using Claims.Auditing;
 using Claims.Repositories;
+using Claims.Repositories.Auditing;
 using Claims.Repositories.Repositories;
 using Claims.Services;
 using Microsoft.EntityFrameworkCore;

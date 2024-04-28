@@ -1,12 +1,12 @@
-﻿using Claims.Domain;
+﻿using Claims.Domain.Contracts;
 
 namespace Claims.Services
 {
-	public interface IClaimsService
+    public interface IClaimsService
 	{
         Task<IEnumerable<Claim>> GetClaimsAsync();
         Task<Claim> GetClaimAsync(string id);
-        Task CreateClaimAsync(Claim item);
+        Task<string> CreateClaimAsync(Claim claim);
         Task DeleteClaimAsync(string id);
     }
 }

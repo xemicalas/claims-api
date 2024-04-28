@@ -1,5 +1,7 @@
-using Claims.Domain.Exceptions;
+using Claims.Domain.Contracts;
+using Claims.Domain.Contracts.Exceptions;
 using Claims.Services;
+using Claims.WebApi.Contracts;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -22,39 +24,33 @@ namespace Claims.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Claim>>> GetAsync()
+        public async Task<ActionResult<IEnumerable<GetClaimResponse>>> GetAsync()
         {
             var claims = await _claimsService.GetClaimsAsync();
 
-            return Ok(claims.Adapt<IEnumerable<Claim>>());
+            return Ok(claims.Adapt<IEnumerable<GetClaimResponse>>());
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Claim>> GetAsync(string id)
+        public async Task<ActionResult<GetClaimResponse>> GetAsync(string id)
         {
             try
             {
                 var claim = await _claimsService.GetClaimAsync(id);
 
-                return Ok(claim.Adapt<Claim>());
+                return Ok(claim.Adapt<GetClaimResponse>());
             }
             catch (ClaimNotFoundException)
             {
                 return NotFound();
             }
-            
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateAsync(Claim claim)
+        public async Task<ActionResult> CreateAsync(CreateClaimRequest claim)
         {
-            if (claim.Id == null)
-            {
-                claim.Id = Guid.NewGuid().ToString();
-            }
-            
-            await _claimsService.CreateClaimAsync(claim.Adapt<Domain.Claim>());
-            await _auditerService.AuditClaim(claim.Id, "POST");
+            var claimId = await _claimsService.CreateClaimAsync(claim.Adapt<Claim>());
+            await _auditerService.AuditClaim(claimId, "POST");
 
             return Ok(claim);
         }
@@ -73,7 +69,6 @@ namespace Claims.Controllers
             {
                 return NotFound();
             }
-
         }
     }
 }

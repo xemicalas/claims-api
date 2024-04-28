@@ -1,4 +1,4 @@
-﻿namespace Claims.Domain
+﻿namespace Claims.Domain.Contracts
 {
     public class Claim
 	{
@@ -26,6 +26,11 @@
             Name = name;
             Type = type;
             DamageCost = damageCost;
+        }
+
+        public void SetId(string id)
+        {
+            Id = id;
         }
 	}
 }

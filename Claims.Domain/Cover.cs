@@ -1,4 +1,4 @@
-﻿namespace Claims.Domain
+﻿namespace Claims.Domain.Contracts
 {
     public class Cover
 	{
@@ -21,6 +21,11 @@
             EndDate = endDate;
             Type = type;
             Premium = premium;
+        }
+
+        public void SetId(string id)
+        {
+            Id = id;
         }
 
         public void SetPremium(decimal premium)

@@ -1,4 +1,4 @@
-﻿using Claims.Domain;
+﻿using Claims.Domain.Contracts;
 
 namespace Claims.Services
 {
@@ -6,7 +6,7 @@ namespace Claims.Services
 	{
         Task<IEnumerable<Cover>> GetCoversAsync();
         Task<Cover> GetCoverAsync(string id);
-        Task CreateCoverAsync(Cover cover);
+        Task<string> CreateCoverAsync(Cover cover);
         Task DeleteCoverAsync(string id);
     }
 }

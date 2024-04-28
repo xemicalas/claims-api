@@ -11,4 +11,13 @@
     <ProjectReference Include="..\Claims.Repositories.Contracts\Claims.Repositories.Contracts.csproj" />
     <ProjectReference Include="..\Claims.Domain\Claims.Domain.Contracts.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Mapster" Version="7.4.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
 </Project>

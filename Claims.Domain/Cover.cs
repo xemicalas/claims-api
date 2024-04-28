@@ -2,15 +2,15 @@
 {
     public class Cover
 	{
-        public string Id { get; }
+        public string Id { get; private set; }
 
-        public DateOnly StartDate { get; }
+        public DateOnly StartDate { get; private set; }
 
-        public DateOnly EndDate { get; }
+        public DateOnly EndDate { get; private set; }
 
-        public CoverType Type { get; }
+        public CoverType Type { get; private set; }
 
-        public decimal Premium { get; }
+        public decimal Premium { get; private set; }
 
         public Cover(string id, DateOnly startDate, DateOnly endDate, CoverType type, decimal premium)
 		{
@@ -20,6 +20,11 @@
             StartDate = startDate;
             EndDate = endDate;
             Type = type;
+            Premium = premium;
+        }
+
+        public void SetPremium(decimal premium)
+        {
             Premium = premium;
         }
 	}

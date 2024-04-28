@@ -2,17 +2,17 @@
 {
     public class Claim
 	{
-        public string Id { get; }
+        public string Id { get; private set; }
 
-        public string CoverId { get; }
+        public string CoverId { get; private set; }
 
-        public DateTime Created { get; }
+        public DateTime Created { get; private set; }
 
-        public string Name { get; }
+        public string Name { get; private set; }
 
-        public ClaimType Type { get; }
+        public ClaimType Type { get; private set; }
 
-        public decimal DamageCost { get; }
+        public decimal DamageCost { get; private set; }
 
         public Claim(string id, string coverId, DateTime created, string name, ClaimType type, decimal damageCost)
 		{

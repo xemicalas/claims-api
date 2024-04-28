@@ -1,3 +1,4 @@
+using Claims.Domain.Exceptions;
 using Claims.Services;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
@@ -39,16 +40,26 @@ public class CoversController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Cover>> GetAsync(string id)
     {
-        var cover = await _coversService.GetCoverAsync(id);
+        try
+        {
+            var cover = await _coversService.GetCoverAsync(id);
 
-        return Ok(cover.Adapt<Cover>());
+            return Ok(cover.Adapt<Cover>());
+        }
+        catch (CoverNotFoundException)
+        {
+            return NotFound();
+        }
     }
 
     [HttpPost]
     public async Task<ActionResult> CreateAsync(Cover cover)
     {
-        cover.Id = Guid.NewGuid().ToString();
-        //cover.Premium = ComputePremium(cover.StartDate, cover.EndDate, cover.Type);
+        if (cover.Id == null)
+        {
+            cover.Id = Guid.NewGuid().ToString();
+        }
+        
         await _coversService.CreateCoverAsync(cover.Adapt<Domain.Cover>());
         await _auditerService.AuditCover(cover.Id, "POST");
 
@@ -58,9 +69,17 @@ public class CoversController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteAsync(string id)
     {
-        await _auditerService.AuditCover(id, "DELETE");
-        await _coversService.DeleteCoverAsync(id);
+        try
+        {
+            await _coversService.DeleteCoverAsync(id);
+            await _auditerService.AuditCover(id, "DELETE");
 
-        return NoContent();
+            return NoContent();
+        }
+        catch (CoverNotFoundException)
+        {
+            return NotFound();
+        }
+
     }
 }

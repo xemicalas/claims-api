@@ -1,4 +1,5 @@
-﻿using Claims.Repositories.Contracts;
+﻿using Claims.Domain.Exceptions;
+using Claims.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.EntityFrameworkCore.Extensions;
 
@@ -37,9 +38,16 @@ namespace Claims.Repositories.Repositories
 
         public async Task<ClaimEntity> GetClaimAsync(string id)
         {
-            return await Claims
+            var claim = await Claims
                 .Where(claim => claim.Id == id)
                 .SingleOrDefaultAsync();
+
+            if (claim == null)
+            {
+                throw new ClaimNotFoundException();
+            }
+
+            return claim;
         }
 
         public async Task<IEnumerable<ClaimEntity>> GetClaimsAsync()

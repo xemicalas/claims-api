@@ -1,3 +1,4 @@
+using Claims.Domain.Exceptions;
 using Claims.Services;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
@@ -31,15 +32,27 @@ namespace Claims.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Claim>> GetAsync(string id)
         {
-            var claim = await _claimsService.GetClaimAsync(id);
+            try
+            {
+                var claim = await _claimsService.GetClaimAsync(id);
 
-            return Ok(claim.Adapt<Claim>());
+                return Ok(claim.Adapt<Claim>());
+            }
+            catch (ClaimNotFoundException)
+            {
+                return NotFound();
+            }
+            
         }
 
         [HttpPost]
         public async Task<ActionResult> CreateAsync(Claim claim)
         {
-            claim.Id = Guid.NewGuid().ToString();
+            if (claim.Id == null)
+            {
+                claim.Id = Guid.NewGuid().ToString();
+            }
+            
             await _claimsService.CreateClaimAsync(claim.Adapt<Domain.Claim>());
             await _auditerService.AuditClaim(claim.Id, "POST");
 
@@ -47,10 +60,20 @@ namespace Claims.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task DeleteAsync(string id)
+        public async Task<ActionResult> DeleteAsync(string id)
         {
-            await _auditerService.AuditClaim(id, "DELETE");
-            await _claimsService.DeleteClaimAsync(id);
+            try
+            {
+                await _claimsService.DeleteClaimAsync(id);
+                await _auditerService.AuditClaim(id, "DELETE");
+
+                return NoContent();
+            }
+            catch (ClaimNotFoundException)
+            {
+                return NotFound();
+            }
+
         }
     }
 }

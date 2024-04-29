@@ -39,20 +39,19 @@ void ConfigureServices(WebApplicationBuilder builder)
 
 void AddDatabaseContexts(WebApplicationBuilder builder)
 {
+    var client = new MongoClient(builder.Configuration.GetConnectionString("MongoDb"));
+    var database = client.GetDatabase(builder.Configuration["MongoDb:DatabaseName"]);
+
     builder.Services.AddDbContext<AuditContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
     builder.Services.AddDbContext<ClaimsRepository>(options =>
     {
-        var client = new MongoClient(builder.Configuration.GetConnectionString("MongoDb"));
-        var database = client.GetDatabase(builder.Configuration["MongoDb:DatabaseName"]);
         options.UseMongoDB(database.Client, database.DatabaseNamespace.DatabaseName);
     });
 
     builder.Services.AddDbContext<CoversRepository>(options =>
     {
-        var client = new MongoClient(builder.Configuration.GetConnectionString("MongoDb"));
-        var database = client.GetDatabase(builder.Configuration["MongoDb:DatabaseName"]);
         options.UseMongoDB(database.Client, database.DatabaseNamespace.DatabaseName);
     });
 }

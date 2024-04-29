@@ -59,6 +59,13 @@ public class ClaimsControllerTests
     }
 
     [Fact]
+    public async Task When_RemoveUnknownClaim_Expect_NotFound()
+    {
+        var removeClaimResponse = await _client.DeleteAsync($"/Claims/{Guid.NewGuid()}");
+        Assert.Equal(System.Net.HttpStatusCode.NotFound, removeClaimResponse.StatusCode);
+    }
+
+    [Fact]
     public async Task When_CreateGetAndRemoveClaim_Expect_Success()
     {
         var (_, createCoverResponse) = await CoversControllerTests.CreateCoverAsync(_client, null, null);

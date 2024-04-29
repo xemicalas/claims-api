@@ -45,6 +45,13 @@ namespace Claims.Integration.Tests
         }
 
         [Fact]
+        public async Task When_RemoveUnknownCover_Expect_NotFound()
+        {
+            var removeCoverResponse = await _client.DeleteAsync($"/Covers/{Guid.NewGuid()}");
+            Assert.Equal(System.Net.HttpStatusCode.NotFound, removeCoverResponse.StatusCode);
+        }
+
+        [Fact]
         public async Task When_CreateGetAndRemoveCover_Expect_Success()
         {
             var (request, createCoverResponse) = await CreateCoverAsync(_client, null, null);

@@ -40,11 +40,11 @@ public class ClaimsControllerTests
     }
 
     [Fact]
-    public async Task When_CreateClaimWithNotExistingCoverId_Expect_NotFound()
+    public async Task When_CreateClaimWithNotExistingCoverId_Expect_BadRequest()
     {
         var (_, createClaimResponse) = await CreateClaimAsync(_client, Guid.NewGuid().ToString());
 
-        Assert.Equal(System.Net.HttpStatusCode.NotFound, createClaimResponse.StatusCode);
+        Assert.Equal(System.Net.HttpStatusCode.BadRequest, createClaimResponse.StatusCode);
     }
 
     [Fact]

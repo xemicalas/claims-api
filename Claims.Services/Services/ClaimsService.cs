@@ -1,5 +1,4 @@
 ﻿using Claims.Domain.Contracts;
-using Claims.Domain.Contracts.Exceptions;
 using Claims.Repositories;
 using Claims.Repositories.Contracts;
 using Mapster;
@@ -9,25 +8,14 @@ namespace Claims.Services
     public class ClaimsService : IClaimsService
 	{
         private readonly IClaimsRepository _claimsRepository;
-        private readonly ICoversService _coversService;
 
-        public ClaimsService(IClaimsRepository claimsRepository, ICoversService coversService)
+        public ClaimsService(IClaimsRepository claimsRepository)
 		{
 			_claimsRepository = claimsRepository;
-            _coversService = coversService;
 		}
 
         public async Task<string> CreateClaimAsync(Claim claim)
         {
-            try
-            {
-                await _coversService.GetCoverAsync(claim.CoverId);
-            }
-            catch (CoverNotFoundException)
-            {
-                throw;
-            }
-
             var claimId = Guid.NewGuid().ToString();
             claim.Id = claimId;
 

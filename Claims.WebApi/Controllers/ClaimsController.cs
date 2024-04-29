@@ -71,23 +71,16 @@ namespace Claims.Controllers
         [HttpPost]
         public async Task<ActionResult<string>> CreateAsync(CreateClaimRequest claim)
         {
-            try
+            var validationResult = await _validator.ValidateAsync(claim);
+            if (!validationResult.IsValid)
             {
-                var validationResult = _validator.Validate(claim);
-                if (!validationResult.IsValid)
-                {
-                    return BadRequest(validationResult.Errors);
-                }
-
-                var claimId = await _claimsService.CreateClaimAsync(claim.Adapt<Claim>());
-                await _auditerService.AuditClaimAsync(claimId, "POST");
-
-                return Ok(claimId);
+                return BadRequest(validationResult.Errors);
             }
-            catch (CoverNotFoundException)
-            {
-                return NotFound();
-            }
+
+            var claimId = await _claimsService.CreateClaimAsync(claim.Adapt<Claim>());
+            await _auditerService.AuditClaimAsync(claimId, "POST");
+
+            return Ok(claimId);
         }
 
         /// <summary>

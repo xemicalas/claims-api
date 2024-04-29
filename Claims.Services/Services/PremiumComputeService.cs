@@ -2,56 +2,52 @@
 
 namespace Claims.Services
 {
-public class PremiumComputeService : IPremiumComputeService
-	{
-		public PremiumComputeService()
-		{
-		}
+    public class PremiumComputeService : IPremiumComputeService
+    {
+	    public PremiumComputeService()
+	    {
+	    }
 
         public decimal ComputePremium(DateOnly startDate, DateOnly endDate, CoverType coverType)
         {
             var multiplier = 1.3m;
-            if (coverType == CoverType.Yacht)
+            switch (coverType)
             {
-                multiplier = 1.1m;
-            }
-
-            if (coverType == CoverType.PassengerShip)
-            {
-                multiplier = 1.2m;
-            }
-
-            if (coverType == CoverType.Tanker)
-            {
-                multiplier = 1.5m;
+                case CoverType.Yacht:
+                    multiplier = 1.1m;
+                    break;
+                case CoverType.PassengerShip:
+                    multiplier = 1.2m;
+                    break;
+                case CoverType.Tanker:
+                    multiplier = 1.5m;
+                    break;
             }
 
             var premiumPerDay = 1250 * multiplier;
-            var insuranceLength = endDate.DayNumber - startDate.DayNumber;
+            var daysLeftToCover = endDate.DayNumber - startDate.DayNumber;
             var totalPremium = 0m;
 
-            for (var i = 0; i < insuranceLength; i++)
+            var firtPeriodDays = Math.Min(30, daysLeftToCover);
+
+            totalPremium += premiumPerDay * firtPeriodDays;
+            daysLeftToCover -= 30;
+
+            if (daysLeftToCover > 0)
             {
-                if (i < 30)
-                {
-                    totalPremium += premiumPerDay;
-                }
-                else if (i < 180 && coverType == CoverType.Yacht)
-                {
-                    totalPremium += premiumPerDay - premiumPerDay * 0.05m;
-                }
-                else if (i < 180)
-                {
-                    totalPremium += premiumPerDay - premiumPerDay * 0.02m;
-                }
-                else if (i < 365 && coverType == CoverType.Yacht)
-                {
-                    totalPremium += premiumPerDay - premiumPerDay * 0.08m;
-                }
-                else if (i < 365)
-                {
-                    totalPremium += premiumPerDay - premiumPerDay * 0.03m;
-                }
+                var secondPeriodDays = Math.Min(180 - 30, daysLeftToCover);
+                var discount = coverType == CoverType.Yacht ? 0.05m : 0.02m;
+
+                totalPremium += (premiumPerDay - premiumPerDay * discount) * secondPeriodDays;
+                daysLeftToCover -= 180 - 30;
+            }
+
+            if (daysLeftToCover > 0)
+            {
+                var thirdPeriodDays = Math.Min(365 - 180, daysLeftToCover);
+                var discount = coverType == CoverType.Yacht ? 0.08m : 0.03m;
+
+                totalPremium += (premiumPerDay - premiumPerDay * discount) * thirdPeriodDays;
             }
 
             return totalPremium;

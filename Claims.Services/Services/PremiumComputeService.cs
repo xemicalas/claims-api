@@ -4,9 +4,9 @@ namespace Claims.Services
 {
     public class PremiumComputeService : IPremiumComputeService
     {
-	    public PremiumComputeService()
-	    {
-	    }
+        public PremiumComputeService()
+        {
+        }
 
         public decimal ComputePremium(DateOnly startDate, DateOnly endDate, CoverType coverType)
         {
@@ -54,4 +54,3 @@ namespace Claims.Services
         }
     }
 }
-

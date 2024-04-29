@@ -34,7 +34,7 @@ public class ClaimsControllerTests
     [Fact]
     public async Task When_CreateWithDamageExceedingLimit_Expect_BadRequest()
     {
-        var (_, createClaimResponse) = await CreateClaimAsync(_client, Guid.NewGuid().ToString(), 100001);
+        var (_, createClaimResponse) = await CreateClaimAsync(_client, Guid.NewGuid().ToString(), null, 100001);
 
         Assert.Equal(System.Net.HttpStatusCode.BadRequest, createClaimResponse.StatusCode);
     }
@@ -42,8 +42,19 @@ public class ClaimsControllerTests
     [Fact]
     public async Task When_CreateClaimWithNotExistingCoverId_Expect_BadRequest()
     {
-        var (_, createClaimResponse) = await CreateClaimAsync(_client, Guid.NewGuid().ToString());
+        var (_, createClaimResponse) = await CreateClaimAsync(_client, Guid.NewGuid().ToString(), null);
 
+        Assert.Equal(System.Net.HttpStatusCode.BadRequest, createClaimResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task When_CreateClaimWithNotInCoverPeriod_Expect_BadRequest()
+    {
+        var (_, createCoverResponse) = await CoversControllerTests.CreateCoverAsync(_client, null, null);
+        createCoverResponse.EnsureSuccessStatusCode();
+        var coverId = await createCoverResponse.Content.ReadAsStringAsync();
+
+        var (_, createClaimResponse) = await CreateClaimAsync(_client, coverId, DateTime.UtcNow.AddYears(-1));
         Assert.Equal(System.Net.HttpStatusCode.BadRequest, createClaimResponse.StatusCode);
     }
 
@@ -54,7 +65,7 @@ public class ClaimsControllerTests
         createCoverResponse.EnsureSuccessStatusCode();
         var coverId = await createCoverResponse.Content.ReadAsStringAsync();
 
-        var (request, createClaimResponse) = await CreateClaimAsync(_client, coverId);
+        var (request, createClaimResponse) = await CreateClaimAsync(_client, coverId, null);
         createClaimResponse.EnsureSuccessStatusCode();
         var claimId = await createClaimResponse.Content.ReadAsStringAsync();
 
@@ -77,12 +88,12 @@ public class ClaimsControllerTests
         Assert.Equal(System.Net.HttpStatusCode.NotFound, getClaimResponse.StatusCode);
     }
 
-    private static async Task<(CreateClaimRequest, HttpResponseMessage)> CreateClaimAsync(HttpClient client, string coverId, decimal damageCost = 50000)
+    private static async Task<(CreateClaimRequest, HttpResponseMessage)> CreateClaimAsync(HttpClient client, string coverId, DateTime? created, decimal damageCost = 50000)
     {
         CreateClaimRequest request = new()
         {
             CoverId = coverId,
-            Created = DateTime.UtcNow,
+            Created = created.HasValue ? created.Value : DateTime.UtcNow.AddHours(1),
             Name = Guid.NewGuid().ToString(),
             Type = ClaimType.BadWeather,
             DamageCost = damageCost

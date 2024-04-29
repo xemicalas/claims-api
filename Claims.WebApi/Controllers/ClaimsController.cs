@@ -59,14 +59,14 @@ namespace Claims.Controllers
         /// Creates claim by provided properties
         /// </summary>
         /// <param name="claim">Claim object</param>
-        /// <returns>Created claim object</returns>
+        /// <returns>Created claim identifier</returns>
         [HttpPost]
-        public async Task<ActionResult> CreateAsync(CreateClaimRequest claim)
+        public async Task<ActionResult<string>> CreateAsync(CreateClaimRequest claim)
         {
             var claimId = await _claimsService.CreateClaimAsync(claim.Adapt<Claim>());
             await _auditerService.AuditClaimAsync(claimId, "POST");
 
-            return Ok(claim);
+            return Ok(claimId);
         }
 
         /// <summary>

@@ -8,7 +8,7 @@ namespace Claims.WebApi.Validators
 		public CoverRequestValidator()
 		{
             RuleFor(request => request.StartDate)
-				.GreaterThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow))
+				.GreaterThanOrEqualTo(DateTime.UtcNow)
 				.WithMessage("StartDate cannot be in the past");
 
             RuleFor(request => request.EndDate)

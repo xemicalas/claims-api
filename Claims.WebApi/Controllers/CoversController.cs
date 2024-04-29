@@ -74,14 +74,14 @@ public class CoversController : ControllerBase
     /// Creates cover by provided properties
     /// </summary>
     /// <param name="cover">Cover object</param>
-    /// <returns>Created cover object</returns>
+    /// <returns>Created cover identifier</returns>
     [HttpPost]
-    public async Task<ActionResult> CreateAsync(CreateCoverRequest cover)
+    public async Task<ActionResult<string>> CreateAsync(CreateCoverRequest cover)
     {
         var coverId = await _coversService.CreateCoverAsync(cover.Adapt<Cover>());
         await _auditerService.AuditCoverAsync(coverId, "POST");
 
-        return Ok(cover);
+        return Ok(coverId);
     }
 
     /// <summary>

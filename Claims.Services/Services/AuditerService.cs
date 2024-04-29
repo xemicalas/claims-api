@@ -25,12 +25,12 @@ namespace Claims.Services
 
         private void AuditClaim(string id, string httpRequestType)
         {
-            auditerRepository.AuditClaim(id, httpRequestType);
+            //auditerRepository.AuditClaim(id, httpRequestType);
         }
 
         private void AuditCover(string id, string httpRequestType)
         {
-            auditerRepository.AuditCover(id, httpRequestType);
+            //auditerRepository.AuditCover(id, httpRequestType);
         }
     }
 }

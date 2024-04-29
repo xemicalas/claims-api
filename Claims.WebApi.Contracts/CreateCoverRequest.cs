@@ -12,25 +12,19 @@ namespace Claims.WebApi.Contracts
         /// Start date of the cover
         /// </summary>
         [JsonProperty(PropertyName = "startDate")]
-        public DateOnly StartDate { get; set; }
+        public DateTime StartDate { get; set; }
 
         /// <summary>
         /// End date of the cover
         /// </summary>
         [JsonProperty(PropertyName = "endDate")]
-        public DateOnly EndDate { get; set; }
+        public DateTime EndDate { get; set; }
 
 
         /// <summary>
         /// Cover type
         /// </summary>
-        [JsonProperty(PropertyName = "claimType")]
+        [JsonProperty(PropertyName = "coverType")]
         public CoverType Type { get; set; }
-
-        /// <summary>
-        /// Cover premium amount
-        /// </summary>
-        [JsonProperty(PropertyName = "premium")]
-        public decimal Premium { get; set; }
     }
 }

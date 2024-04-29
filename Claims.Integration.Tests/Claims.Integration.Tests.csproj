@@ -23,4 +23,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Claims\Claims.Host.csproj" />
+    <ProjectReference Include="..\Claims.WebApi.Contracts\Claims.WebApi.Contracts.csproj" />
+  </ItemGroup>
 </Project>

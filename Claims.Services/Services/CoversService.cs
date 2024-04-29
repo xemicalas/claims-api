@@ -19,7 +19,7 @@ namespace Claims.Services
         public async Task<string> CreateCoverAsync(Cover cover)
         {
             var coverId = Guid.NewGuid().ToString();
-            var premium = _premiumComputeService.ComputePremium(cover.StartDate, cover.EndDate, cover.Type);
+            var premium = _premiumComputeService.ComputePremium(DateOnly.FromDateTime(cover.StartDate), DateOnly.FromDateTime(cover.EndDate), cover.Type);
             cover.Id = coverId;
             cover.Premium = premium;
 

@@ -115,11 +115,11 @@ void Configure(WebApplication app)
 
 void MigrateDatabase(WebApplication app)
 {
-    //using (var scope = app.Services.CreateScope())
-    //{
-    //    var context = scope.ServiceProvider.GetRequiredService<AuditContext>();
-    //    context.Database.Migrate();
-    //}
+    using (var scope = app.Services.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<AuditContext>();
+        context.Database.Migrate();
+    }
 }
 
 public partial class Program { }

@@ -1,63 +1,125 @@
-using System.Configuration;
 using System.Text.Json.Serialization;
-using Claims.Auditing;
-using Claims.Controllers;
+using Claims.Repositories;
+using Claims.Repositories.Auditing;
+using Claims.Repositories.Repositories;
+using Claims.Services;
+using Claims.WebApi.Contracts;
+using Claims.WebApi.Validators;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-
+using MongoDB.Driver;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllers().AddJsonOptions(x =>
-    {
-        x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-    }
-);
-
-builder.Services.AddSingleton(
-    InitializeCosmosClientInstanceAsync(builder.Configuration.GetSection("CosmosDb")).GetAwaiter().GetResult());
-
-builder.Services.AddDbContext<AuditContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+ConfigureServices(builder);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<AuditContext>();
-    context.Database.Migrate();
-}
+Configure(app);
 
 app.Run();
 
-static async Task<CosmosDbService> InitializeCosmosClientInstanceAsync(IConfigurationSection configurationSection)
+void ConfigureServices(WebApplicationBuilder builder)
 {
-    string databaseName = configurationSection.GetSection("DatabaseName").Value;
-    string containerName = configurationSection.GetSection("ContainerName").Value;
-    string account = configurationSection.GetSection("Account").Value;
-    string key = configurationSection.GetSection("Key").Value;
-    Microsoft.Azure.Cosmos.CosmosClient client = new Microsoft.Azure.Cosmos.CosmosClient(account, key);
-    CosmosDbService cosmosDbService = new CosmosDbService(client, databaseName, containerName);
-    Microsoft.Azure.Cosmos.DatabaseResponse database = await client.CreateDatabaseIfNotExistsAsync(databaseName);
-    await database.Database.CreateContainerIfNotExistsAsync(containerName, "/id");
+    builder.Services
+        .AddControllers()
+        .AddJsonOptions(x =>
+        {
+            x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        });
 
-    return cosmosDbService;
+    AddDatabaseContexts(builder);
+    AddRepositories(builder.Services);
+    AddServices(builder.Services);
+    AddValidators(builder.Services);
+    AddSwagger(builder.Services);
+    AddLogger(builder.Host);
+}
+
+void AddDatabaseContexts(WebApplicationBuilder builder)
+{
+    builder.Services.AddDbContext<AuditContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+    builder.Services.AddDbContext<ClaimsRepository>(options =>
+    {
+        var client = new MongoClient(builder.Configuration.GetConnectionString("MongoDb"));
+        var database = client.GetDatabase(builder.Configuration["MongoDb:DatabaseName"]);
+        options.UseMongoDB(database.Client, database.DatabaseNamespace.DatabaseName);
+    });
+
+    builder.Services.AddDbContext<CoversRepository>(options =>
+    {
+        var client = new MongoClient(builder.Configuration.GetConnectionString("MongoDb"));
+        var database = client.GetDatabase(builder.Configuration["MongoDb:DatabaseName"]);
+        options.UseMongoDB(database.Client, database.DatabaseNamespace.DatabaseName);
+    });
+}
+
+void AddRepositories(IServiceCollection services)
+{
+    services.AddScoped<IAuditerRepository, AuditerRepository>();
+    services.AddScoped<IClaimsRepository, ClaimsRepository>();
+    services.AddScoped<ICoversRepository, CoversRepository>();
+}
+
+void AddServices(IServiceCollection services)
+{
+    services.AddScoped<ICoversService, CoversService>();
+    services.AddScoped<IClaimsService, ClaimsService>();
+    services.AddScoped<IAuditerService, AuditerService>();
+    services.AddSingleton<IPremiumComputeService, PremiumComputeService>();
+}
+
+void AddValidators(IServiceCollection services)
+{
+    services.AddTransient<IValidator<CreateClaimRequest>, ClaimRequestValidator>();
+    services.AddTransient<IValidator<CreateCoverRequest>, CoverRequestValidator>();
+}
+
+void AddSwagger(IServiceCollection services)
+{
+    services.AddEndpointsApiExplorer();
+    services.AddSwaggerGen(c =>
+    {
+        var contractsXmlPath = Path.Combine(AppContext.BaseDirectory, "Claims.WebApi.xml");
+        var controllersXmlFile = Path.Combine(AppContext.BaseDirectory, "Claims.WebApi.Contracts.xml");
+
+        c.IncludeXmlComments(contractsXmlPath, true);
+        c.IncludeXmlComments(controllersXmlFile, true);
+    });
+}
+
+void AddLogger(IHostBuilder hostBuilder)
+{
+    hostBuilder.UseSerilog(new LoggerConfiguration()
+        .WriteTo.Console()
+        .CreateLogger());
+}
+
+void Configure(WebApplication app)
+{
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+
+    app.UseHttpsRedirection();
+    app.UseAuthorization();
+    app.MapControllers();
+
+    MigrateDatabase(app);
+}
+
+void MigrateDatabase(WebApplication app)
+{
+    //using (var scope = app.Services.CreateScope())
+    //{
+    //    var context = scope.ServiceProvider.GetRequiredService<AuditContext>();
+    //    context.Database.Migrate();
+    //}
 }
 
 public partial class Program { }

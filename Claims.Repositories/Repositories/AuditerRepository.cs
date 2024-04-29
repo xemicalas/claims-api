@@ -1,17 +1,20 @@
-﻿namespace Claims.Auditing
+﻿using Claims.Repositories.Auditing;
+using Claims.Repositories.Contracts;
+
+namespace Claims.Repositories.Repositories
 {
-    public class Auditer
-    {
+    public class AuditerRepository : IAuditerRepository
+	{
         private readonly AuditContext _auditContext;
 
-        public Auditer(AuditContext auditContext)
+        public AuditerRepository(AuditContext auditContext)
         {
             _auditContext = auditContext;
         }
 
         public void AuditClaim(string id, string httpRequestType)
         {
-            var claimAudit = new ClaimAudit()
+            var claimAudit = new ClaimAuditEntity()
             {
                 Created = DateTime.Now,
                 HttpRequestType = httpRequestType,
@@ -21,10 +24,10 @@
             _auditContext.Add(claimAudit);
             _auditContext.SaveChanges();
         }
-        
+
         public void AuditCover(string id, string httpRequestType)
         {
-            var coverAudit = new CoverAudit()
+            var coverAudit = new CoverAuditEntity()
             {
                 Created = DateTime.Now,
                 HttpRequestType = httpRequestType,
@@ -36,3 +39,4 @@
         }
     }
 }
+

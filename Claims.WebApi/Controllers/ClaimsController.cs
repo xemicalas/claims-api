@@ -2,6 +2,7 @@ using Claims.Domain.Contracts;
 using Claims.Domain.Contracts.Exceptions;
 using Claims.Services;
 using Claims.WebApi.Contracts;
+using FluentValidation;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -15,12 +16,19 @@ namespace Claims.Controllers
         private readonly ILogger<ClaimsController> _logger;
         private readonly IClaimsService _claimsService;
         private readonly IAuditerService _auditerService;
+        private readonly IValidator<CreateClaimRequest> _validator;
 
-        public ClaimsController(ILogger<ClaimsController> logger, IClaimsService claimsService, IAuditerService auditerService)
+        public ClaimsController(
+            ILogger<ClaimsController> logger,
+            IClaimsService claimsService,
+            IAuditerService auditerService,
+            IValidator<CreateClaimRequest> validator
+            )
         {
             _logger = logger;
             _claimsService = claimsService;
             _auditerService = auditerService;
+            _validator = validator;
         }
 
         /// <summary>
@@ -65,6 +73,12 @@ namespace Claims.Controllers
         {
             try
             {
+                var validationResult = _validator.Validate(claim);
+                if (!validationResult.IsValid)
+                {
+                    return BadRequest(validationResult.Errors);
+                }
+
                 var claimId = await _claimsService.CreateClaimAsync(claim.Adapt<Claim>());
                 await _auditerService.AuditClaimAsync(claimId, "POST");
 

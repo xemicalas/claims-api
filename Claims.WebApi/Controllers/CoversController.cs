@@ -2,6 +2,7 @@ using Claims.Domain.Contracts;
 using Claims.Domain.Contracts.Exceptions;
 using Claims.Services;
 using Claims.WebApi.Contracts;
+using FluentValidation;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -16,13 +17,21 @@ public class CoversController : ControllerBase
     private readonly ICoversService _coversService;
     private readonly IAuditerService _auditerService;
     private readonly IPremiumComputeService _premiumComputeService;
+    private readonly IValidator<CreateCoverRequest> _validator;
 
-    public CoversController(ILogger<CoversController> logger, ICoversService coversService, IAuditerService auditerService, IPremiumComputeService premiumComputeService)
+    public CoversController(
+        ILogger<CoversController> logger,
+        ICoversService coversService,
+        IAuditerService auditerService,
+        IPremiumComputeService premiumComputeService,
+        IValidator<CreateCoverRequest> validator
+        )
     {
         _logger = logger;
         _coversService = coversService;
         _auditerService = auditerService;
         _premiumComputeService = premiumComputeService;
+        _validator = validator;
     }
 
     /// <summary>
@@ -78,6 +87,12 @@ public class CoversController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<string>> CreateAsync(CreateCoverRequest cover)
     {
+        var validationResult = _validator.Validate(cover);
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(validationResult.Errors);
+        }
+
         var coverId = await _coversService.CreateCoverAsync(cover.Adapt<Cover>());
         await _auditerService.AuditCoverAsync(coverId, "POST");
 

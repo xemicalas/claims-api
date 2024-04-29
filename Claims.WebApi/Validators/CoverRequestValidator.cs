@@ -13,7 +13,7 @@ namespace Claims.WebApi.Validators
 
             RuleFor(request => request.EndDate)
                 .Must((request, endDate) => endDate <= request.StartDate.AddYears(1))
-                .WithMessage("total insurance period cannot exceed 1 year");
+                .WithMessage("Total insurance period cannot exceed 1 year");
         }
 	}
 }

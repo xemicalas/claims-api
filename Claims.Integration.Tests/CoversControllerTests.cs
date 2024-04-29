@@ -31,9 +31,23 @@ namespace Claims.Integration.Tests
         }
 
         [Fact]
+        public async Task When_CreateCoverWithStartDateInThePast_Expect_BadRequest()
+        {
+            var (_, createCoverResponse) = await CreateCoverAsync(_client, DateTime.UtcNow.AddDays(-1), null);
+            Assert.Equal(System.Net.HttpStatusCode.BadRequest, createCoverResponse.StatusCode);
+        }
+
+        [Fact]
+        public async Task When_CreateCoverWithExceedingPeriod_Expect_BadRequest()
+        {
+            var (_, createCoverResponse) = await CreateCoverAsync(_client, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddYears(2));
+            Assert.Equal(System.Net.HttpStatusCode.BadRequest, createCoverResponse.StatusCode);
+        }
+
+        [Fact]
         public async Task When_CreateGetAndRemoveCover_Expect_Success()
         {
-            var (request, createCoverResponse) = await CreateCoverAsync(_client);
+            var (request, createCoverResponse) = await CreateCoverAsync(_client, null, null);
             createCoverResponse.EnsureSuccessStatusCode();
 
             var coverId = await createCoverResponse.Content.ReadAsStringAsync();
@@ -57,12 +71,12 @@ namespace Claims.Integration.Tests
             Assert.Equal(System.Net.HttpStatusCode.NotFound, getCoverResponse.StatusCode);
         }
 
-        public static async Task<(CreateCoverRequest, HttpResponseMessage)> CreateCoverAsync(HttpClient client)
+        public static async Task<(CreateCoverRequest, HttpResponseMessage)> CreateCoverAsync(HttpClient client, DateTime ?startDate, DateTime ?endDate)
         {
             CreateCoverRequest request = new()
             {
-                StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddDays(6 * 30),
+                StartDate = startDate.HasValue ? startDate.Value : DateTime.UtcNow.AddHours(1),
+                EndDate = endDate.HasValue ? endDate.Value : DateTime.UtcNow.AddDays(6 * 30),
                 Type = Domain.Contracts.CoverType.PassengerShip,
             };
 

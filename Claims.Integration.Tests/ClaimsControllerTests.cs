@@ -32,6 +32,14 @@ public class ClaimsControllerTests
     }
 
     [Fact]
+    public async Task When_CreateWithDamageExceedingLimit_Expect_BadRequest()
+    {
+        var (_, createClaimResponse) = await CreateClaimAsync(_client, Guid.NewGuid().ToString(), 100001);
+
+        Assert.Equal(System.Net.HttpStatusCode.BadRequest, createClaimResponse.StatusCode);
+    }
+
+    [Fact]
     public async Task When_CreateClaimWithNotExistingCoverId_Expect_NotFound()
     {
         var (_, createClaimResponse) = await CreateClaimAsync(_client, Guid.NewGuid().ToString());
@@ -42,7 +50,7 @@ public class ClaimsControllerTests
     [Fact]
     public async Task When_CreateGetAndRemoveClaim_Expect_Success()
     {
-        var (_, createCoverResponse) = await CoversControllerTests.CreateCoverAsync(_client);
+        var (_, createCoverResponse) = await CoversControllerTests.CreateCoverAsync(_client, null, null);
         createCoverResponse.EnsureSuccessStatusCode();
         var coverId = await createCoverResponse.Content.ReadAsStringAsync();
 
@@ -69,7 +77,7 @@ public class ClaimsControllerTests
         Assert.Equal(System.Net.HttpStatusCode.NotFound, getClaimResponse.StatusCode);
     }
 
-    private static async Task<(CreateClaimRequest, HttpResponseMessage)> CreateClaimAsync(HttpClient client, string coverId)
+    private static async Task<(CreateClaimRequest, HttpResponseMessage)> CreateClaimAsync(HttpClient client, string coverId, decimal damageCost = 50000)
     {
         CreateClaimRequest request = new()
         {
@@ -77,7 +85,7 @@ public class ClaimsControllerTests
             Created = DateTime.UtcNow,
             Name = Guid.NewGuid().ToString(),
             Type = ClaimType.BadWeather,
-            DamageCost = 50000
+            DamageCost = damageCost
         };
 
         return (request, await client.PostAsync("/Claims", JsonContent.Create(request)));

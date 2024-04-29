@@ -29,6 +29,7 @@ namespace Claims.Controllers
         /// Gets all awailable created claims
         /// </summary>
         /// <returns>List of claims</returns>
+        /// <response code="200">Returns list of claims</response>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GetClaimResponse>>> GetAsync()
         {
@@ -41,6 +42,8 @@ namespace Claims.Controllers
         /// </summary>
         /// <param name="id">Claim identifier</param>
         /// <returns>Claim response</returns>
+        /// <response code="200">Returns claim response</response>
+        /// <response code="404">When the claim is not found</response>
         [HttpGet("{id}")]
         public async Task<ActionResult<GetClaimResponse>> GetAsync(string id)
         {
@@ -61,6 +64,8 @@ namespace Claims.Controllers
         /// </summary>
         /// <param name="claim">Claim object</param>
         /// <returns>Created claim identifier</returns>
+        /// <response code="200">Returns created claim identifier</response>
+        /// <response code="400">When the request is invalid</response>
         [HttpPost]
         public async Task<ActionResult<string>> CreateAsync(CreateClaimRequest claim)
         {
@@ -81,6 +86,8 @@ namespace Claims.Controllers
         /// </summary>
         /// <param name="id">Claim identifier</param>
         /// <returns></returns>
+        /// <response code="204">When claim is successfully deleted</response>
+        /// <response code="404">When claim is not found</response>
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAsync(string id)
         {

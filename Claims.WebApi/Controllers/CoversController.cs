@@ -39,6 +39,7 @@ public class CoversController : ControllerBase
     /// <param name="endDate">Cover's end date</param>
     /// <param name="coverType">Cover type</param>
     /// <returns>Calculated premium amount</returns>
+    /// <response code="200">Returns calculated premium amount</response>
     [HttpPost("/ComputePremium")]
     public ActionResult ComputePremiumAsync(DateOnly startDate, DateOnly endDate, CoverType coverType)
     {
@@ -49,6 +50,7 @@ public class CoversController : ControllerBase
     /// Gets all created covers
     /// </summary>
     /// <returns>List of covers</returns>
+    /// <response code="200">Returns list of covers</response>
     [HttpGet]
     public async Task<ActionResult<IEnumerable<GetCoverResponse>>> GetAsync()
     {
@@ -62,6 +64,8 @@ public class CoversController : ControllerBase
     /// </summary>
     /// <param name="id">Cover identifier</param>
     /// <returns>Cover object</returns>
+    /// <response code="200">Returns cover object</response>
+    /// <response code="404">When cover is not found</response>
     [HttpGet("{id}")]
     public async Task<ActionResult<GetCoverResponse>> GetAsync(string id)
     {
@@ -83,6 +87,8 @@ public class CoversController : ControllerBase
     /// </summary>
     /// <param name="cover">Cover object</param>
     /// <returns>Created cover identifier</returns>
+    /// <response code="200">When cover is successfully created</response>
+    /// <response code="400">When the request is invalid</response>
     [HttpPost]
     public async Task<ActionResult<string>> CreateAsync(CreateCoverRequest cover)
     {
@@ -103,6 +109,8 @@ public class CoversController : ControllerBase
     /// </summary>
     /// <param name="id">Cover identifier</param>
     /// <returns></returns>
+    /// <response code="204">When cover is successfully deleted</response>
+    /// <response code="404">When cover is not found</response>
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteAsync(string id)
     {

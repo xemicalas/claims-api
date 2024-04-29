@@ -8,82 +8,118 @@ using Claims.WebApi.Validators;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services
-    .AddControllers()
-    .AddJsonOptions(x =>
-    {
-        x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-    });
-
-builder.Services.AddDbContext<AuditContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddDbContext<ClaimsRepository>(
-    options =>
-    {
-        var client = new MongoClient(builder.Configuration.GetConnectionString("MongoDb"));
-        var database = client.GetDatabase(builder.Configuration["MongoDb:DatabaseName"]);
-        options.UseMongoDB(database.Client, database.DatabaseNamespace.DatabaseName);
-    }
-);
-builder.Services.AddDbContext<CoversRepository>(
-    options =>
-    {
-        var client = new MongoClient(builder.Configuration.GetConnectionString("MongoDb"));
-        var database = client.GetDatabase(builder.Configuration["MongoDb:DatabaseName"]);
-        options.UseMongoDB(database.Client, database.DatabaseNamespace.DatabaseName);
-    }
-);
-
-builder.Services.AddScoped<IAuditerRepository, AuditerRepository>();
-builder.Services.AddScoped<IClaimsRepository, ClaimsRepository>();
-builder.Services.AddScoped<ICoversRepository, CoversRepository>();
-
-builder.Services.AddScoped<ICoversService, CoversService>();
-builder.Services.AddScoped<IClaimsService, ClaimsService>();
-builder.Services.AddScoped<IAuditerService, AuditerService>();
-builder.Services.AddSingleton<IPremiumComputeService, PremiumComputeService>();
-
-builder.Services.AddValidatorsFromAssemblyContaining<ClaimRequestValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<CoverRequestValidator>();
-builder.Services.AddTransient<IValidator<CreateClaimRequest>, ClaimRequestValidator>();
-builder.Services.AddTransient<IValidator<CreateCoverRequest>, CoverRequestValidator>();
-
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    var contractsXmlPath = Path.Combine(AppContext.BaseDirectory, "Claims.WebApi.xml");
-    var controllersXmlFile = Path.Combine(AppContext.BaseDirectory, "Claims.WebApi.Contracts.xml");
-
-    c.IncludeXmlComments(contractsXmlPath, true);
-    c.IncludeXmlComments(controllersXmlFile, true);
-});
+ConfigureServices(builder);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-//using (var scope = app.Services.CreateScope())
-//{
-//    var context = scope.ServiceProvider.GetRequiredService<AuditContext>();
-//    context.Database.Migrate();
-//}
+Configure(app);
 
 app.Run();
+
+void ConfigureServices(WebApplicationBuilder builder)
+{
+    builder.Services
+        .AddControllers()
+        .AddJsonOptions(x =>
+        {
+            x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        });
+
+    AddDatabaseContexts(builder);
+    AddRepositories(builder.Services);
+    AddServices(builder.Services);
+    AddValidators(builder.Services);
+    AddSwagger(builder.Services);
+    AddLogger(builder.Host);
+}
+
+void AddDatabaseContexts(WebApplicationBuilder builder)
+{
+    builder.Services.AddDbContext<AuditContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+    builder.Services.AddDbContext<ClaimsRepository>(options =>
+    {
+        var client = new MongoClient(builder.Configuration.GetConnectionString("MongoDb"));
+        var database = client.GetDatabase(builder.Configuration["MongoDb:DatabaseName"]);
+        options.UseMongoDB(database.Client, database.DatabaseNamespace.DatabaseName);
+    });
+
+    builder.Services.AddDbContext<CoversRepository>(options =>
+    {
+        var client = new MongoClient(builder.Configuration.GetConnectionString("MongoDb"));
+        var database = client.GetDatabase(builder.Configuration["MongoDb:DatabaseName"]);
+        options.UseMongoDB(database.Client, database.DatabaseNamespace.DatabaseName);
+    });
+}
+
+void AddRepositories(IServiceCollection services)
+{
+    services.AddScoped<IAuditerRepository, AuditerRepository>();
+    services.AddScoped<IClaimsRepository, ClaimsRepository>();
+    services.AddScoped<ICoversRepository, CoversRepository>();
+}
+
+void AddServices(IServiceCollection services)
+{
+    services.AddScoped<ICoversService, CoversService>();
+    services.AddScoped<IClaimsService, ClaimsService>();
+    services.AddScoped<IAuditerService, AuditerService>();
+    services.AddSingleton<IPremiumComputeService, PremiumComputeService>();
+}
+
+void AddValidators(IServiceCollection services)
+{
+    services.AddTransient<IValidator<CreateClaimRequest>, ClaimRequestValidator>();
+    services.AddTransient<IValidator<CreateCoverRequest>, CoverRequestValidator>();
+}
+
+void AddSwagger(IServiceCollection services)
+{
+    services.AddEndpointsApiExplorer();
+    services.AddSwaggerGen(c =>
+    {
+        var contractsXmlPath = Path.Combine(AppContext.BaseDirectory, "Claims.WebApi.xml");
+        var controllersXmlFile = Path.Combine(AppContext.BaseDirectory, "Claims.WebApi.Contracts.xml");
+
+        c.IncludeXmlComments(contractsXmlPath, true);
+        c.IncludeXmlComments(controllersXmlFile, true);
+    });
+}
+
+void AddLogger(IHostBuilder hostBuilder)
+{
+    hostBuilder.UseSerilog(new LoggerConfiguration()
+        .WriteTo.Console()
+        .CreateLogger());
+}
+
+void Configure(WebApplication app)
+{
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+
+    app.UseHttpsRedirection();
+    app.UseAuthorization();
+    app.MapControllers();
+
+    MigrateDatabase(app);
+}
+
+void MigrateDatabase(WebApplication app)
+{
+    //using (var scope = app.Services.CreateScope())
+    //{
+    //    var context = scope.ServiceProvider.GetRequiredService<AuditContext>();
+    //    context.Database.Migrate();
+    //}
+}
 
 public partial class Program { }

@@ -16,19 +16,12 @@ namespace Claims.Controllers
     {
         private readonly ILogger<ClaimsController> _logger;
         private readonly IClaimsService _claimsService;
-        private readonly IAuditerService _auditerService;
         private readonly IValidator<CreateClaimRequest> _validator;
 
-        public ClaimsController(
-            ILogger<ClaimsController> logger,
-            IClaimsService claimsService,
-            IAuditerService auditerService,
-            IValidator<CreateClaimRequest> validator
-            )
+        public ClaimsController(ILogger<ClaimsController> logger, IClaimsService claimsService, IValidator<CreateClaimRequest> validator)
         {
             _logger = logger;
             _claimsService = claimsService;
-            _auditerService = auditerService;
             _validator = validator;
         }
 
@@ -40,7 +33,6 @@ namespace Claims.Controllers
         public async Task<ActionResult<IEnumerable<GetClaimResponse>>> GetAsync()
         {
             var claims = await _claimsService.GetClaimsAsync();
-
             return Ok(claims.Adapt<IEnumerable<GetClaimResponse>>());
         }
 
@@ -55,7 +47,6 @@ namespace Claims.Controllers
             try
             {
                 var claim = await _claimsService.GetClaimAsync(id);
-
                 return Ok(claim.Adapt<GetClaimResponse>());
             }
             catch (ClaimNotFoundException)
@@ -81,7 +72,6 @@ namespace Claims.Controllers
             }
 
             var claimId = await _claimsService.CreateClaimAsync(claim.Adapt<Claim>());
-            await _auditerService.AuditClaimAsync(claimId, "POST");
 
             return Ok(claimId);
         }
@@ -97,8 +87,6 @@ namespace Claims.Controllers
             try
             {
                 await _claimsService.DeleteClaimAsync(id);
-                await _auditerService.AuditClaimAsync(id, "DELETE");
-
                 return NoContent();
             }
             catch (ClaimNotFoundException)

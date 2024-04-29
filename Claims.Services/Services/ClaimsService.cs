@@ -8,11 +8,13 @@ namespace Claims.Services
     public class ClaimsService : IClaimsService
 	{
         private readonly IClaimsRepository _claimsRepository;
+        private readonly IAuditerService _auditerService;
 
-        public ClaimsService(IClaimsRepository claimsRepository)
+        public ClaimsService(IClaimsRepository claimsRepository, IAuditerService auditerService)
 		{
 			_claimsRepository = claimsRepository;
-		}
+            _auditerService = auditerService;
+        }
 
         public async Task<string> CreateClaimAsync(Claim claim)
         {
@@ -21,12 +23,15 @@ namespace Claims.Services
 
             await _claimsRepository.CreateClaimAsync(claim.Adapt<ClaimEntity>());
 
+            await _auditerService.AuditClaimAsync(claimId, "POST");
+
             return claimId;
         }
 
-        public Task DeleteClaimAsync(string id)
+        public async Task DeleteClaimAsync(string id)
         {
-            return _claimsRepository.DeleteClaimAsync(id);
+            await _claimsRepository.DeleteClaimAsync(id);
+            await _auditerService.AuditClaimAsync(id, "DELETE");
         }
 
         public async Task<Claim> GetClaimAsync(string id)

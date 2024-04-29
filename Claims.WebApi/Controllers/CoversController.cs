@@ -16,21 +16,18 @@ public class CoversController : ControllerBase
 {
     private readonly ILogger<CoversController> _logger;
     private readonly ICoversService _coversService;
-    private readonly IAuditerService _auditerService;
     private readonly IPremiumComputeService _premiumComputeService;
     private readonly IValidator<CreateCoverRequest> _validator;
 
     public CoversController(
         ILogger<CoversController> logger,
         ICoversService coversService,
-        IAuditerService auditerService,
         IPremiumComputeService premiumComputeService,
         IValidator<CreateCoverRequest> validator
         )
     {
         _logger = logger;
         _coversService = coversService;
-        _auditerService = auditerService;
         _premiumComputeService = premiumComputeService;
         _validator = validator;
     }
@@ -97,7 +94,6 @@ public class CoversController : ControllerBase
         }
 
         var coverId = await _coversService.CreateCoverAsync(cover.Adapt<Cover>());
-        await _auditerService.AuditCoverAsync(coverId, "POST");
 
         return Ok(coverId);
     }
@@ -113,8 +109,6 @@ public class CoversController : ControllerBase
         try
         {
             await _coversService.DeleteCoverAsync(id);
-            await _auditerService.AuditCoverAsync(id, "DELETE");
-
             return NoContent();
         }
         catch (CoverNotFoundException)

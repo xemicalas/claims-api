@@ -4,11 +4,11 @@ namespace Claims.Services
 {
     public class AuditerService : IAuditerService
 	{
-        private readonly IAuditerRepository auditerRepository;
+        private readonly IAuditerRepository _auditerRepository;
 
         public AuditerService(IAuditerRepository auditerRepository)
 		{
-            this.auditerRepository = auditerRepository;
+            _auditerRepository = auditerRepository;
         }
 
         public Task AuditClaimAsync(string id, string httpRequestType)
@@ -27,12 +27,12 @@ namespace Claims.Services
 
         private void AuditClaim(string id, string httpRequestType)
         {
-            //auditerRepository.AuditClaim(id, httpRequestType);
+            _auditerRepository.AuditClaim(id, httpRequestType);
         }
 
         private void AuditCover(string id, string httpRequestType)
         {
-            //auditerRepository.AuditCover(id, httpRequestType);
+            _auditerRepository.AuditCover(id, httpRequestType);
         }
     }
 }

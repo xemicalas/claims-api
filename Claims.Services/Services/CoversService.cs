@@ -9,11 +9,13 @@ namespace Claims.Services
 	{
         private readonly ICoversRepository _coversRepository;
         private readonly IPremiumComputeService _premiumComputeService;
+        private readonly IAuditerService _auditerService;
 
-        public CoversService(ICoversRepository coversRepository, IPremiumComputeService premiumComputeService)
+        public CoversService(ICoversRepository coversRepository, IPremiumComputeService premiumComputeService, IAuditerService auditerService)
 		{
             _coversRepository = coversRepository;
             _premiumComputeService = premiumComputeService;
+            _auditerService = auditerService;
         }
 
         public async Task<string> CreateCoverAsync(Cover cover)
@@ -24,13 +26,15 @@ namespace Claims.Services
             cover.Premium = premium;
 
             await _coversRepository.CreateCoverAsync(cover.Adapt<CoverEntity>());
+            await _auditerService.AuditCoverAsync(coverId, "POST");
 
             return coverId;
         }
 
-        public Task DeleteCoverAsync(string id)
+        public async Task DeleteCoverAsync(string id)
         {
-            return _coversRepository.DeleteCoverAsync(id);
+            await _coversRepository.DeleteCoverAsync(id);
+            await _auditerService.AuditCoverAsync(id, "DELETE");
         }
 
         public async Task<Cover> GetCoverAsync(string id)

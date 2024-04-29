@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32519.379
@@ -21,7 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Claims.Domain.Contracts", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Claims.Integration.Tests", "Claims.Integration.Tests\Claims.Integration.Tests.csproj", "{B8AA564F-1F7A-4F9E-9EE6-2F1CBAA49E21}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Claims.Unit.Tests", "Claims.Integration.Tests\Claims.Unit.Tests\Claims.Unit.Tests.csproj", "{7BC211A0-EF1B-4179-8A70-A1FD9A1AD02A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Claims.Unit.Tests", "Claims.Unit.Tests\Claims.Unit.Tests.csproj", "{7BC211A0-EF1B-4179-8A70-A1FD9A1AD02A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

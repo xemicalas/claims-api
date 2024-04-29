@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Claims.Domain.Contracts", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Claims.Integration.Tests", "Claims.Integration.Tests\Claims.Integration.Tests.csproj", "{B8AA564F-1F7A-4F9E-9EE6-2F1CBAA49E21}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Claims.Unit.Tests", "Claims.Integration.Tests\Claims.Unit.Tests\Claims.Unit.Tests.csproj", "{7BC211A0-EF1B-4179-8A70-A1FD9A1AD02A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,12 +61,17 @@ Global
 		{B8AA564F-1F7A-4F9E-9EE6-2F1CBAA49E21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B8AA564F-1F7A-4F9E-9EE6-2F1CBAA49E21}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B8AA564F-1F7A-4F9E-9EE6-2F1CBAA49E21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BC211A0-EF1B-4179-8A70-A1FD9A1AD02A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BC211A0-EF1B-4179-8A70-A1FD9A1AD02A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BC211A0-EF1B-4179-8A70-A1FD9A1AD02A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BC211A0-EF1B-4179-8A70-A1FD9A1AD02A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B8AA564F-1F7A-4F9E-9EE6-2F1CBAA49E21} = {003F7774-8202-4837-8C40-72297F3876C1}
+		{7BC211A0-EF1B-4179-8A70-A1FD9A1AD02A} = {003F7774-8202-4837-8C40-72297F3876C1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9D4C1340-FBC4-4F35-944F-26237883E032}

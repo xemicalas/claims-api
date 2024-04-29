@@ -78,7 +78,7 @@ namespace Claims.Integration.Tests
             Assert.Equal(System.Net.HttpStatusCode.NotFound, getCoverResponse.StatusCode);
         }
 
-        public static async Task<(CreateCoverRequest, HttpResponseMessage)> CreateCoverAsync(HttpClient client, DateTime ?startDate, DateTime ?endDate)
+        internal static async Task<(CreateCoverRequest, HttpResponseMessage)> CreateCoverAsync(HttpClient client, DateTime ?startDate, DateTime ?endDate)
         {
             CreateCoverRequest request = new()
             {

@@ -2,7 +2,7 @@
 
 namespace Claims.Services
 {
-    public class PremiumComputeService : IPremiumComputeService
+public class PremiumComputeService : IPremiumComputeService
 	{
 		public PremiumComputeService()
 		{
@@ -32,11 +32,26 @@ namespace Claims.Services
 
             for (var i = 0; i < insuranceLength; i++)
             {
-                if (i < 30) totalPremium += premiumPerDay;
-                else if (i < 180 && coverType == CoverType.Yacht) totalPremium += premiumPerDay - premiumPerDay * 0.05m;
-                else if (i < 180) totalPremium += premiumPerDay - premiumPerDay * 0.02m;
-                else if (i < 365 && coverType == CoverType.Yacht) totalPremium += premiumPerDay - premiumPerDay * 0.08m;
-                else if (i < 365) totalPremium += premiumPerDay - premiumPerDay * 0.03m;
+                if (i < 30)
+                {
+                    totalPremium += premiumPerDay;
+                }
+                else if (i < 180 && coverType == CoverType.Yacht)
+                {
+                    totalPremium += premiumPerDay - premiumPerDay * 0.05m;
+                }
+                else if (i < 180)
+                {
+                    totalPremium += premiumPerDay - premiumPerDay * 0.02m;
+                }
+                else if (i < 365 && coverType == CoverType.Yacht)
+                {
+                    totalPremium += premiumPerDay - premiumPerDay * 0.08m;
+                }
+                else if (i < 365)
+                {
+                    totalPremium += premiumPerDay - premiumPerDay * 0.03m;
+                }
             }
 
             return totalPremium;

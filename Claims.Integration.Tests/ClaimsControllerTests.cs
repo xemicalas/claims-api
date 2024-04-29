@@ -95,7 +95,7 @@ public class ClaimsControllerTests
         Assert.Equal(System.Net.HttpStatusCode.NotFound, getClaimResponse.StatusCode);
     }
 
-    private static async Task<(CreateClaimRequest, HttpResponseMessage)> CreateClaimAsync(HttpClient client, string coverId, DateTime? created, decimal damageCost = 50000)
+    internal static async Task<(CreateClaimRequest, HttpResponseMessage)> CreateClaimAsync(HttpClient client, string coverId, DateTime? created, decimal damageCost = 50000)
     {
         CreateClaimRequest request = new()
         {

@@ -13,4 +13,3 @@ namespace Claims.WebApi.Validators
         }
     }
 }
-

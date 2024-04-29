@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Json;
+using Claims.Domain.Contracts;
 using Claims.WebApi.Contracts;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
@@ -19,7 +20,7 @@ public class ClaimsControllerTests
     }
 
     [Fact]
-    public async Task Get_Claims()
+    public async Task When_GetClaims_Expect_Success()
     {
         var getClaimsResponse = await _client.GetAsync("/Claims");
         getClaimsResponse.EnsureSuccessStatusCode();
@@ -31,24 +32,44 @@ public class ClaimsControllerTests
     }
 
     [Fact]
-    public async Task Create_Get_And_Remove_Claim()
+    public async Task When_CreateClaimWithNotExistingCoverId_Expect_NotFound()
     {
-        CreateClaimRequest request = new() {
+        CreateClaimRequest request = new()
+        {
             CoverId = Guid.NewGuid().ToString(),
             Created = DateTime.UtcNow,
             Name = Guid.NewGuid().ToString(),
-            Type = Domain.Contracts.ClaimType.BadWeather,
+            Type = ClaimType.BadWeather,
             DamageCost = 50000
         };
 
-        var createClaimResponse = await _client.PostAsync("/Claims", JsonContent.Create(request));
-        createClaimResponse.EnsureSuccessStatusCode();
+        var createClaimResponse = await CreateClaimAsync(_client, request);
 
+        Assert.Equal(System.Net.HttpStatusCode.NotFound, createClaimResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task When_CreateGetAndRemoveClaim_Expect_Success()
+    {
+        var createCoverResponse = await CoversControllerTests.CreateCoverAsync(_client);
+        createCoverResponse.EnsureSuccessStatusCode();
+        var coverId = await createCoverResponse.Content.ReadAsStringAsync();
+
+        CreateClaimRequest request = new()
+        {
+            CoverId = coverId,
+            Created = DateTime.UtcNow,
+            Name = Guid.NewGuid().ToString(),
+            Type = ClaimType.BadWeather,
+            DamageCost = 50000
+        };
+
+        var createClaimResponse = await CreateClaimAsync(_client, request);
+        createClaimResponse.EnsureSuccessStatusCode();
         var claimId = await createClaimResponse.Content.ReadAsStringAsync();
 
         var getClaimResponse = await _client.GetAsync($"/Claims/{claimId}");
         getClaimResponse.EnsureSuccessStatusCode();
-
         var getClaimResponseContent = await getClaimResponse.Content.ReadAsStringAsync();
         var claim = JsonConvert.DeserializeObject<GetClaimResponse>(getClaimResponseContent)!;
 
@@ -64,5 +85,10 @@ public class ClaimsControllerTests
 
         getClaimResponse = await _client.GetAsync($"/Claims/{claimId}");
         Assert.Equal(System.Net.HttpStatusCode.NotFound, getClaimResponse.StatusCode);
+    }
+
+    private static async Task<HttpResponseMessage> CreateClaimAsync(HttpClient client, CreateClaimRequest request)
+    {
+        return await client.PostAsync("/Claims", JsonContent.Create(request));
     }
 }

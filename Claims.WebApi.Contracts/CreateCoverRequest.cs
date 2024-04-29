@@ -20,7 +20,6 @@ namespace Claims.WebApi.Contracts
         [JsonProperty(PropertyName = "endDate")]
         public DateTime EndDate { get; set; }
 
-
         /// <summary>
         /// Cover type
         /// </summary>

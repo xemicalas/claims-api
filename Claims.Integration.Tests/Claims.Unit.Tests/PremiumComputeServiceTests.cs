@@ -68,7 +68,7 @@ public class PremiumComputeServiceTests
             };
             yield return new object[]
             {
-                "when period is more than 365",
+                "when period is more than 365 days",
                 DateOnly.Parse("2024-05-01"),
                 DateOnly.Parse("2025-05-02"),
                 CoverType.Yacht,
@@ -117,7 +117,7 @@ public class PremiumComputeServiceTests
             };
             yield return new object[]
             {
-                "when period is more than 365",
+                "when period is more than 365 days",
                 DateOnly.Parse("2024-05-01"),
                 DateOnly.Parse("2025-05-02"),
                 CoverType.PassengerShip,
@@ -166,7 +166,7 @@ public class PremiumComputeServiceTests
             };
             yield return new object[]
             {
-                "when period is more than 365",
+                "when period is more than 365 days",
                 DateOnly.Parse("2024-05-01"),
                 DateOnly.Parse("2025-05-02"),
                 CoverType.ContainerShip,
@@ -215,7 +215,7 @@ public class PremiumComputeServiceTests
             };
             yield return new object[]
             {
-                "when period is more than 365",
+                "when period is more than 365 days",
                 DateOnly.Parse("2024-05-01"),
                 DateOnly.Parse("2025-05-02"),
                 CoverType.BulkCarrier,
@@ -223,20 +223,20 @@ public class PremiumComputeServiceTests
             };
             //Tanker
             yield return new object[]
-{
+            {
                 "when period is less than or equal 30 days",
                 DateOnly.Parse("2024-05-01"),
                 DateOnly.Parse("2024-05-31"),
                 CoverType.Tanker,
-                48750,
-};
+                56250.0,
+            };
             yield return new object[]
             {
                 "when period is more than 30 days, but less than or equal 180 days",
                 DateOnly.Parse("2024-05-01"),
                 DateOnly.Parse("2024-06-01"),
                 CoverType.Tanker,
-                50342.5,
+                58087.5,
             };
             yield return new object[]
             {
@@ -244,7 +244,7 @@ public class PremiumComputeServiceTests
                 DateOnly.Parse("2024-05-01"),
                 DateOnly.Parse("2024-10-28"),
                 CoverType.Tanker,
-                287625,
+                331875,
             };
             yield return new object[]
             {
@@ -252,7 +252,7 @@ public class PremiumComputeServiceTests
                 DateOnly.Parse("2024-05-01"),
                 DateOnly.Parse("2024-10-29"),
                 CoverType.Tanker,
-                289201.25,
+                333693.75,
             };
             yield return new object[]
             {
@@ -260,15 +260,15 @@ public class PremiumComputeServiceTests
                 DateOnly.Parse("2024-05-01"),
                 DateOnly.Parse("2025-05-01"),
                 CoverType.Tanker,
-                579231.25,
+                668343.75,
             };
             yield return new object[]
             {
-                "when period is more than 365",
+                "when period is more than 365 days",
                 DateOnly.Parse("2024-05-01"),
                 DateOnly.Parse("2025-05-02"),
                 CoverType.Tanker,
-                579231.25,
+                668343.75,
             };
         }
 

@@ -6,6 +6,7 @@ using FluentValidation;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace Claims.Controllers;
 
@@ -75,6 +76,7 @@ public class CoversController : ControllerBase
         }
         catch (CoverNotFoundException)
         {
+            _logger.LogDebug("Cover by id {id} was not found", id);
             return NotFound();
         }
     }
@@ -90,6 +92,7 @@ public class CoversController : ControllerBase
         var validationResult = _validator.Validate(cover);
         if (!validationResult.IsValid)
         {
+            _logger.LogDebug("The request is invalid, errors: {errors}", JsonConvert.SerializeObject(validationResult.Errors));
             return BadRequest(validationResult.Errors);
         }
 
@@ -116,6 +119,7 @@ public class CoversController : ControllerBase
         }
         catch (CoverNotFoundException)
         {
+            _logger.LogDebug("Cover by id {id} was not found", id);
             return NotFound();
         }
     }

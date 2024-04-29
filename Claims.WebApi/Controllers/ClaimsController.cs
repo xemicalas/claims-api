@@ -6,6 +6,7 @@ using FluentValidation;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace Claims.Controllers
 {
@@ -59,6 +60,7 @@ namespace Claims.Controllers
             }
             catch (ClaimNotFoundException)
             {
+                _logger.LogDebug("Claim by id {id} was not found", id);
                 return NotFound();
             }
         }
@@ -74,6 +76,7 @@ namespace Claims.Controllers
             var validationResult = await _validator.ValidateAsync(claim);
             if (!validationResult.IsValid)
             {
+                _logger.LogDebug("The request is invalid, errors: {errors}", JsonConvert.SerializeObject(validationResult.Errors));
                 return BadRequest(validationResult.Errors);
             }
 
@@ -100,6 +103,7 @@ namespace Claims.Controllers
             }
             catch (ClaimNotFoundException)
             {
+                _logger.LogDebug("Claim by id {id} was not found", id);
                 return NotFound();
             }
         }

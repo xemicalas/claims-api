@@ -33,14 +33,7 @@ namespace Claims.Integration.Tests
         [Fact]
         public async Task When_CreateGetAndRemoveCover_Expect_Success()
         {
-            CreateCoverRequest request = new()
-            {
-                StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddDays(6 * 30),
-                Type = Domain.Contracts.CoverType.PassengerShip,
-            };
-
-            var createCoverResponse = await _client.PostAsync("/Covers", JsonContent.Create(request));
+            var (request, createCoverResponse) = await CreateCoverAsync(_client);
             createCoverResponse.EnsureSuccessStatusCode();
 
             var coverId = await createCoverResponse.Content.ReadAsStringAsync();
@@ -64,7 +57,7 @@ namespace Claims.Integration.Tests
             Assert.Equal(System.Net.HttpStatusCode.NotFound, getCoverResponse.StatusCode);
         }
 
-        public static async Task<HttpResponseMessage> CreateCoverAsync(HttpClient client)
+        public static async Task<(CreateCoverRequest, HttpResponseMessage)> CreateCoverAsync(HttpClient client)
         {
             CreateCoverRequest request = new()
             {
@@ -73,7 +66,7 @@ namespace Claims.Integration.Tests
                 Type = Domain.Contracts.CoverType.PassengerShip,
             };
 
-            return await client.PostAsync("/Covers", JsonContent.Create(request));
+            return (request, await client.PostAsync("/Covers", JsonContent.Create(request)));
         }
     }
 }

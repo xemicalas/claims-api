@@ -34,16 +34,7 @@ public class ClaimsControllerTests
     [Fact]
     public async Task When_CreateClaimWithNotExistingCoverId_Expect_NotFound()
     {
-        CreateClaimRequest request = new()
-        {
-            CoverId = Guid.NewGuid().ToString(),
-            Created = DateTime.UtcNow,
-            Name = Guid.NewGuid().ToString(),
-            Type = ClaimType.BadWeather,
-            DamageCost = 50000
-        };
-
-        var createClaimResponse = await CreateClaimAsync(_client, request);
+        var (_, createClaimResponse) = await CreateClaimAsync(_client, Guid.NewGuid().ToString());
 
         Assert.Equal(System.Net.HttpStatusCode.NotFound, createClaimResponse.StatusCode);
     }
@@ -51,20 +42,11 @@ public class ClaimsControllerTests
     [Fact]
     public async Task When_CreateGetAndRemoveClaim_Expect_Success()
     {
-        var createCoverResponse = await CoversControllerTests.CreateCoverAsync(_client);
+        var (_, createCoverResponse) = await CoversControllerTests.CreateCoverAsync(_client);
         createCoverResponse.EnsureSuccessStatusCode();
         var coverId = await createCoverResponse.Content.ReadAsStringAsync();
 
-        CreateClaimRequest request = new()
-        {
-            CoverId = coverId,
-            Created = DateTime.UtcNow,
-            Name = Guid.NewGuid().ToString(),
-            Type = ClaimType.BadWeather,
-            DamageCost = 50000
-        };
-
-        var createClaimResponse = await CreateClaimAsync(_client, request);
+        var (request, createClaimResponse) = await CreateClaimAsync(_client, coverId);
         createClaimResponse.EnsureSuccessStatusCode();
         var claimId = await createClaimResponse.Content.ReadAsStringAsync();
 
@@ -87,8 +69,17 @@ public class ClaimsControllerTests
         Assert.Equal(System.Net.HttpStatusCode.NotFound, getClaimResponse.StatusCode);
     }
 
-    private static async Task<HttpResponseMessage> CreateClaimAsync(HttpClient client, CreateClaimRequest request)
+    private static async Task<(CreateClaimRequest, HttpResponseMessage)> CreateClaimAsync(HttpClient client, string coverId)
     {
-        return await client.PostAsync("/Claims", JsonContent.Create(request));
+        CreateClaimRequest request = new()
+        {
+            CoverId = coverId,
+            Created = DateTime.UtcNow,
+            Name = Guid.NewGuid().ToString(),
+            Type = ClaimType.BadWeather,
+            DamageCost = 50000
+        };
+
+        return (request, await client.PostAsync("/Claims", JsonContent.Create(request)));
     }
 }

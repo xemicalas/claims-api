@@ -37,9 +37,7 @@ namespace Claims.Application.Services
             var daysLeftToCover = endDate.DayNumber - startDate.DayNumber;
             var totalPremium = 0m;
 
-            var firtPeriodDays = Math.Min(FirstPeriodDays, daysLeftToCover);
-
-            totalPremium += premiumPerDay * firtPeriodDays;
+            totalPremium += ComputePremiumForFirstPeriod(daysLeftToCover, premiumPerDay);
             daysLeftToCover -= FirstPeriodDays;
 
             if (daysLeftToCover > 0)
@@ -52,6 +50,15 @@ namespace Claims.Application.Services
             {
                 totalPremium += ComputePremiumForThirdPeriod(daysLeftToCover, premiumPerDay, coverType);
             }
+
+            return totalPremium;
+        }
+
+        private decimal ComputePremiumForFirstPeriod(int daysLeftToCover, decimal premiumPerDay)
+        {
+            var firtPeriodDays = Math.Min(FirstPeriodDays, daysLeftToCover);
+
+            var totalPremium = premiumPerDay * firtPeriodDays;
 
             return totalPremium;
         }

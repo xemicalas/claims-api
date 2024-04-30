@@ -1,4 +1,5 @@
-﻿using Claims.Domain.Contracts;
+﻿using System.Text.Json.Serialization;
+using Claims.Domain.Contracts;
 
 namespace Claims.Api.Contracts
 {
@@ -25,6 +26,7 @@ namespace Claims.Api.Contracts
         /// <summary>
         /// Cover type
         /// </summary>
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public CoverType Type { get; set; }
 
         /// <summary>

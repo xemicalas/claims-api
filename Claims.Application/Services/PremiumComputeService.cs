@@ -44,22 +44,41 @@ namespace Claims.Application.Services
 
             if (daysLeftToCover > 0)
             {
-                var secondPeriodDays = Math.Min(SecondPeriodDays, daysLeftToCover);
-                var discount = coverType == CoverType.Yacht ? 0.05m : 0.02m;
-
-                totalPremium += (premiumPerDay - premiumPerDay * discount) * secondPeriodDays;
+                totalPremium += ComputePremiumForSecondPeriod(daysLeftToCover, premiumPerDay, coverType);
                 daysLeftToCover -= SecondPeriodDays;
             }
 
             if (daysLeftToCover > 0)
             {
-                var thirdPeriodDays = Math.Min(ThirdPeriodDays, daysLeftToCover);
-                var discount = coverType == CoverType.Yacht ? 0.08m : 0.03m;
-
-                totalPremium += (premiumPerDay - premiumPerDay * discount) * thirdPeriodDays;
+                totalPremium += ComputePremiumForThirdPeriod(daysLeftToCover, premiumPerDay, coverType);
             }
 
             return totalPremium;
+        }
+
+        private decimal ComputePremiumForSecondPeriod(int daysLeftToCover, decimal premiumPerDay, CoverType coverType)
+        {
+            var secondPeriodDays = Math.Min(SecondPeriodDays, daysLeftToCover);
+            var discount = coverType == CoverType.Yacht ? 0.05m : 0.02m;
+
+            var totalPremium = ComputePremiumWithDiscount(premiumPerDay, discount, secondPeriodDays);
+
+            return totalPremium;
+        }
+
+        private decimal ComputePremiumForThirdPeriod(int daysLeftToCover, decimal premiumPerDay, CoverType coverType)
+        {
+            var thirdPeriodDays = Math.Min(ThirdPeriodDays, daysLeftToCover);
+            var discount = coverType == CoverType.Yacht ? 0.08m : 0.03m;
+
+            var totalPremium = ComputePremiumWithDiscount(premiumPerDay, discount, thirdPeriodDays);
+
+            return totalPremium;
+        }
+
+        private decimal ComputePremiumWithDiscount(decimal premiumPerDay, decimal discount, int periodDays)
+        {
+            return (premiumPerDay - premiumPerDay * discount) * periodDays;
         }
     }
 }

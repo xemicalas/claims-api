@@ -1,10 +1,9 @@
-﻿namespace Claims.Domain.Contracts.Exceptions
+﻿namespace Claims.Domain.Exceptions
 {
     public class CoverNotFoundException : Exception
-	{
-		public CoverNotFoundException()
-		{
-		}
-	}
+    {
+        public CoverNotFoundException()
+        {
+        }
+    }
 }
-

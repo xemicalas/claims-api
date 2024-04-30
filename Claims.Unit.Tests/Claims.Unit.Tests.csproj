@@ -20,10 +20,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="FluentAssertions" Version="6.12.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Claims.Services\Claims.Services.csproj" />
-    <ProjectReference Include="..\Claims.Domain\Claims.Domain.Contracts.csproj" />
+    <ProjectReference Include="..\Claims.Domain\Claims.Domain.csproj" />
+    <ProjectReference Include="..\Claims.Application\Claims.Application.csproj" />
   </ItemGroup>
 </Project>

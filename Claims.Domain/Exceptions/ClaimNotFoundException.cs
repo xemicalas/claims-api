@@ -1,9 +1,9 @@
-﻿namespace Claims.Domain.Contracts.Exceptions
+﻿namespace Claims.Domain.Exceptions
 {
     public class ClaimNotFoundException : Exception
-	{
-		public ClaimNotFoundException()
-		{
-		}
-	}
+    {
+        public ClaimNotFoundException()
+        {
+        }
+    }
 }

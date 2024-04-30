@@ -1,8 +1,10 @@
-﻿using Claims.WebApi.Contracts;
-using Microsoft.AspNetCore.Mvc.Testing;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net.Http.Json;
 using Xunit;
 using Newtonsoft.Json;
+using Claims.Api.Contracts;
+using Claims.Domain.Contracts;
+using FluentAssertions;
 
 namespace Claims.Integration.Tests
 {
@@ -19,6 +21,25 @@ namespace Claims.Integration.Tests
         }
 
         [Fact]
+        public async Task When_ComputePremium_Expect_Success()
+        {
+            var request = new ComputePremiumRequest
+            {
+                StartDate = DateOnly.FromDateTime(DateTime.UtcNow),
+                EndDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(60)),
+                CoverType = CoverType.ContainerShip
+            };
+
+            var computePremiumResponse = await _client.PostAsync("/ComputePremium", JsonContent.Create(request));
+            computePremiumResponse.EnsureSuccessStatusCode();
+
+            var responseContent = await computePremiumResponse.Content.ReadAsStringAsync();
+            var response = JsonConvert.DeserializeObject<ComputePremiumResponse>(responseContent)!;
+
+            response.Amount.Should().BeGreaterThan(0);
+        }
+
+        [Fact]
         public async Task When_GetCovers_Expect_Success()
         {
             var getCoversResponse = await _client.GetAsync("/Covers");
@@ -27,28 +48,31 @@ namespace Claims.Integration.Tests
             var responseContent = await getCoversResponse.Content.ReadAsStringAsync();
             var covers = JsonConvert.DeserializeObject<List<GetCoverResponse>>(responseContent)!;
 
-            Assert.True(covers.Count() > 0);
+            covers.Count().Should().BeGreaterThan(0);
         }
 
         [Fact]
         public async Task When_CreateCoverWithStartDateInThePast_Expect_BadRequest()
         {
             var (_, createCoverResponse) = await CreateCoverAsync(_client, DateTime.UtcNow.AddDays(-1), null);
-            Assert.Equal(System.Net.HttpStatusCode.BadRequest, createCoverResponse.StatusCode);
+
+            createCoverResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
         }
 
         [Fact]
         public async Task When_CreateCoverWithExceedingPeriod_Expect_BadRequest()
         {
             var (_, createCoverResponse) = await CreateCoverAsync(_client, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddYears(2));
-            Assert.Equal(System.Net.HttpStatusCode.BadRequest, createCoverResponse.StatusCode);
+
+            createCoverResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
         }
 
         [Fact]
         public async Task When_RemoveUnknownCover_Expect_NotFound()
         {
             var removeCoverResponse = await _client.DeleteAsync($"/Covers/{Guid.NewGuid()}");
-            Assert.Equal(System.Net.HttpStatusCode.NotFound, removeCoverResponse.StatusCode);
+
+            removeCoverResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
         }
 
         [Fact]
@@ -57,34 +81,36 @@ namespace Claims.Integration.Tests
             var (request, createCoverResponse) = await CreateCoverAsync(_client, null, null);
             createCoverResponse.EnsureSuccessStatusCode();
 
-            var coverId = await createCoverResponse.Content.ReadAsStringAsync();
+            var createCoverResponseContent = await createCoverResponse.Content.ReadAsStringAsync();
+            var createdCoverResponse = JsonConvert.DeserializeObject<CreatedCoverResponse>(createCoverResponseContent)!;
 
-            var getCoverResponse = await _client.GetAsync($"/Covers/{coverId}");
+            var getCoverResponse = await _client.GetAsync($"/Covers/{createdCoverResponse.Id}");
             getCoverResponse.EnsureSuccessStatusCode();
 
             var getCoverResponseContent = await getCoverResponse.Content.ReadAsStringAsync();
             var cover = JsonConvert.DeserializeObject<GetCoverResponse>(getCoverResponseContent)!;
 
-            Assert.Equal(coverId, cover.Id);
-            Assert.Equal(request.StartDate.Date, cover.StartDate.Date);
-            Assert.Equal(request.EndDate.Date, cover.EndDate.Date);
-            //Assert.Equal(request.Type, cover.Type);
-            Assert.True(cover.Premium > 0);
+            cover.Id.Should().Be(createdCoverResponse.Id);
+            cover.StartDate.Date.Should().Be(request.StartDate.Date);
+            cover.EndDate.Date.Should().Be(request.EndDate.Date);
+            //cover.Type.Should().Be(request.Type);
+            cover.Premium.Should().BeGreaterThan(0);
 
-            var removeCoverResponse = await _client.DeleteAsync($"/Covers/{coverId}");
+            var removeCoverResponse = await _client.DeleteAsync($"/Covers/{createdCoverResponse.Id}");
             removeCoverResponse.EnsureSuccessStatusCode();
 
-            getCoverResponse = await _client.GetAsync($"/Covers/{coverId}");
-            Assert.Equal(System.Net.HttpStatusCode.NotFound, getCoverResponse.StatusCode);
+            getCoverResponse = await _client.GetAsync($"/Covers/{createdCoverResponse.Id}");
+
+            getCoverResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
         }
 
-        internal static async Task<(CreateCoverRequest, HttpResponseMessage)> CreateCoverAsync(HttpClient client, DateTime ?startDate, DateTime ?endDate)
+        internal static async Task<(CreateCoverRequest, HttpResponseMessage)> CreateCoverAsync(HttpClient client, DateTime? startDate, DateTime? endDate)
         {
             CreateCoverRequest request = new()
             {
-                StartDate = startDate.HasValue ? startDate.Value : DateTime.UtcNow.AddHours(1),
-                EndDate = endDate.HasValue ? endDate.Value : DateTime.UtcNow.AddDays(6 * 30),
-                Type = Domain.Contracts.CoverType.PassengerShip,
+                StartDate = startDate ?? DateTime.UtcNow.AddHours(1),
+                EndDate = endDate ?? DateTime.UtcNow.AddDays(6 * 30),
+                Type = CoverType.PassengerShip,
             };
 
             return (request, await client.PostAsync("/Covers", JsonContent.Create(request)));

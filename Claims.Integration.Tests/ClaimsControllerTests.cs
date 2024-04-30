@@ -1,6 +1,6 @@
 ﻿using System.Net.Http.Json;
+using Claims.Api.Contracts;
 using Claims.Domain.Contracts;
-using Claims.WebApi.Contracts;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Xunit;

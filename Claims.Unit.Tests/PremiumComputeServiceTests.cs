@@ -1,6 +1,6 @@
 ﻿using System.Collections;
+using Claims.Application.Services;
 using Claims.Domain.Contracts;
-using Claims.Services;
 
 namespace Claims.Unit.Tests;
 

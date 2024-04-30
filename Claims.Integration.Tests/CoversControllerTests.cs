@@ -1,8 +1,8 @@
-﻿using Claims.WebApi.Contracts;
-using Microsoft.AspNetCore.Mvc.Testing;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net.Http.Json;
 using Xunit;
 using Newtonsoft.Json;
+using Claims.Api.Contracts;
 
 namespace Claims.Integration.Tests
 {

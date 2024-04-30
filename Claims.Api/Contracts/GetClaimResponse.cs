@@ -1,4 +1,5 @@
-﻿using Claims.Domain.Contracts;
+﻿using System.Text.Json.Serialization;
+using Claims.Domain.Contracts;
 namespace Claims.Api.Contracts
 {
     /// <summary>
@@ -29,6 +30,7 @@ namespace Claims.Api.Contracts
         /// <summary>
         /// Claim type
         /// </summary>
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public ClaimType Type { get; set; }
 
         /// <summary>

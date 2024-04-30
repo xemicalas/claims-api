@@ -2,7 +2,6 @@
 using Claims.Api.Contracts;
 using Claims.Domain.Contracts;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Newtonsoft.Json;
 using Xunit;
 using FluentAssertions;
 
@@ -26,10 +25,9 @@ namespace Claims.Integration.Tests
             var getClaimsResponse = await _client.GetAsync("/Claims");
             getClaimsResponse.EnsureSuccessStatusCode();
 
-            var responseContent = await getClaimsResponse.Content.ReadAsStringAsync();
-            var claims = JsonConvert.DeserializeObject<List<GetClaimResponse>>(responseContent)!;
+            var claims = await getClaimsResponse.Content.ReadFromJsonAsync<List<GetClaimResponse>>();
 
-            claims.Count().Should().BeGreaterThan(0);
+            claims!.Count().Should().BeGreaterThan(0);
         }
 
         [Fact]
@@ -53,10 +51,9 @@ namespace Claims.Integration.Tests
         {
             var (_, createCoverResponse) = await CoversControllerTests.CreateCoverAsync(_client, null, null);
             createCoverResponse.EnsureSuccessStatusCode();
-            var createCoverResponseContent = await createCoverResponse.Content.ReadAsStringAsync();
-            var createdCoverResponse = JsonConvert.DeserializeObject<CreatedCoverResponse>(createCoverResponseContent)!;
+            var createdCoverResponse = await createCoverResponse.Content.ReadFromJsonAsync<CreatedCoverResponse>();
 
-            var (_, createClaimResponse) = await CreateClaimAsync(_client, createdCoverResponse.Id, DateTime.UtcNow.AddYears(-1));
+            var (_, createClaimResponse) = await CreateClaimAsync(_client, createdCoverResponse!.Id, DateTime.UtcNow.AddYears(-1));
 
             createClaimResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
         }
@@ -74,24 +71,21 @@ namespace Claims.Integration.Tests
         {
             var (_, createCoverResponse) = await CoversControllerTests.CreateCoverAsync(_client, null, null);
             createCoverResponse.EnsureSuccessStatusCode();
-            var createCoverResponseContent = await createCoverResponse.Content.ReadAsStringAsync();
-            var createdCoverResponse = JsonConvert.DeserializeObject<CreatedCoverResponse>(createCoverResponseContent)!;
+            var createdCoverResponse = await createCoverResponse.Content.ReadFromJsonAsync<CreatedCoverResponse>();
 
-            var (request, createClaimResponse) = await CreateClaimAsync(_client, createdCoverResponse.Id, null);
+            var (request, createClaimResponse) = await CreateClaimAsync(_client, createdCoverResponse!.Id, null);
             createClaimResponse.EnsureSuccessStatusCode();
-            var createClaimResponseContent = await createClaimResponse.Content.ReadAsStringAsync();
-            var createdClaimResponse = JsonConvert.DeserializeObject<CreatedClaimResponse>(createClaimResponseContent)!;
+            var createdClaimResponse = await createClaimResponse.Content.ReadFromJsonAsync<CreatedClaimResponse>();
 
-            var getClaimResponse = await _client.GetAsync($"/Claims/{createdClaimResponse.Id}");
+            var getClaimResponse = await _client.GetAsync($"/Claims/{createdClaimResponse!.Id}");
             getClaimResponse.EnsureSuccessStatusCode();
-            var getClaimResponseContent = await getClaimResponse.Content.ReadAsStringAsync();
-            var claim = JsonConvert.DeserializeObject<GetClaimResponse>(getClaimResponseContent)!;
+            var claim = await getClaimResponse.Content.ReadFromJsonAsync<GetClaimResponse>();
 
-            claim.Id.Should().Be(createdClaimResponse.Id);
+            claim!.Id.Should().Be(createdClaimResponse.Id);
             claim.CoverId.Should().Be(request.CoverId);
             claim.Created.Date.Should().Be(request.Created.Date);
             claim.Name.Should().Be(request.Name);
-            //claim.Type.Should().Be(request.Type);
+            claim.Type.Should().Be(request.Type);
             claim.DamageCost.Should().Be(request.DamageCost);
 
             var removeClaimResponse = await _client.DeleteAsync($"/Claims/{createdClaimResponse.Id}");

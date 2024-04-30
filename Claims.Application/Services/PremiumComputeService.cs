@@ -4,6 +4,15 @@ namespace Claims.Application.Services
 {
     public class PremiumComputeService : IPremiumComputeService
     {
+        private const int BaseDayRate = 1250;
+        private const int Month = 30;
+        private const int HalfYear = 180;
+        private const int Year = 365;
+
+        private const int FirstPeriodDays = Month;
+        private const int SecondPeriodDays = HalfYear - Month;
+        private const int ThirdPeriodDays = Year - HalfYear;
+
         public PremiumComputeService()
         {
         }
@@ -24,27 +33,27 @@ namespace Claims.Application.Services
                     break;
             }
 
-            var premiumPerDay = 1250 * multiplier;
+            var premiumPerDay = BaseDayRate * multiplier;
             var daysLeftToCover = endDate.DayNumber - startDate.DayNumber;
             var totalPremium = 0m;
 
-            var firtPeriodDays = Math.Min(30, daysLeftToCover);
+            var firtPeriodDays = Math.Min(FirstPeriodDays, daysLeftToCover);
 
             totalPremium += premiumPerDay * firtPeriodDays;
-            daysLeftToCover -= 30;
+            daysLeftToCover -= FirstPeriodDays;
 
             if (daysLeftToCover > 0)
             {
-                var secondPeriodDays = Math.Min(180 - 30, daysLeftToCover);
+                var secondPeriodDays = Math.Min(SecondPeriodDays, daysLeftToCover);
                 var discount = coverType == CoverType.Yacht ? 0.05m : 0.02m;
 
                 totalPremium += (premiumPerDay - premiumPerDay * discount) * secondPeriodDays;
-                daysLeftToCover -= 180 - 30;
+                daysLeftToCover -= SecondPeriodDays;
             }
 
             if (daysLeftToCover > 0)
             {
-                var thirdPeriodDays = Math.Min(365 - 180, daysLeftToCover);
+                var thirdPeriodDays = Math.Min(ThirdPeriodDays, daysLeftToCover);
                 var discount = coverType == CoverType.Yacht ? 0.08m : 0.03m;
 
                 totalPremium += (premiumPerDay - premiumPerDay * discount) * thirdPeriodDays;

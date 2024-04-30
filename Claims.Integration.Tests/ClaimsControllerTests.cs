@@ -53,9 +53,10 @@ namespace Claims.Integration.Tests
         {
             var (_, createCoverResponse) = await CoversControllerTests.CreateCoverAsync(_client, null, null);
             createCoverResponse.EnsureSuccessStatusCode();
-            var coverId = await createCoverResponse.Content.ReadAsStringAsync();
+            var createCoverResponseContent = await createCoverResponse.Content.ReadAsStringAsync();
+            var createdCoverResponse = JsonConvert.DeserializeObject<CreatedCoverResponse>(createCoverResponseContent)!;
 
-            var (_, createClaimResponse) = await CreateClaimAsync(_client, coverId, DateTime.UtcNow.AddYears(-1));
+            var (_, createClaimResponse) = await CreateClaimAsync(_client, createdCoverResponse.Id, DateTime.UtcNow.AddYears(-1));
 
             createClaimResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
         }

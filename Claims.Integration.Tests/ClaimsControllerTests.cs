@@ -4,6 +4,7 @@ using Claims.Domain.Contracts;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Xunit;
+using FluentAssertions;
 
 namespace Claims.Integration.Tests
 {
@@ -28,7 +29,7 @@ namespace Claims.Integration.Tests
             var responseContent = await getClaimsResponse.Content.ReadAsStringAsync();
             var claims = JsonConvert.DeserializeObject<List<GetClaimResponse>>(responseContent)!;
 
-            Assert.True(claims.Count() > 0);
+            claims.Count().Should().BeGreaterThan(0);
         }
 
         [Fact]
@@ -36,7 +37,7 @@ namespace Claims.Integration.Tests
         {
             var (_, createClaimResponse) = await CreateClaimAsync(_client, Guid.NewGuid().ToString(), null, 100001);
 
-            Assert.Equal(System.Net.HttpStatusCode.BadRequest, createClaimResponse.StatusCode);
+            createClaimResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
         }
 
         [Fact]
@@ -44,7 +45,7 @@ namespace Claims.Integration.Tests
         {
             var (_, createClaimResponse) = await CreateClaimAsync(_client, Guid.NewGuid().ToString(), null);
 
-            Assert.Equal(System.Net.HttpStatusCode.BadRequest, createClaimResponse.StatusCode);
+            createClaimResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
         }
 
         [Fact]
@@ -55,14 +56,16 @@ namespace Claims.Integration.Tests
             var coverId = await createCoverResponse.Content.ReadAsStringAsync();
 
             var (_, createClaimResponse) = await CreateClaimAsync(_client, coverId, DateTime.UtcNow.AddYears(-1));
-            Assert.Equal(System.Net.HttpStatusCode.BadRequest, createClaimResponse.StatusCode);
+
+            createClaimResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
         }
 
         [Fact]
         public async Task When_RemoveUnknownClaim_Expect_NotFound()
         {
             var removeClaimResponse = await _client.DeleteAsync($"/Claims/{Guid.NewGuid()}");
-            Assert.Equal(System.Net.HttpStatusCode.NotFound, removeClaimResponse.StatusCode);
+
+            removeClaimResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
         }
 
         [Fact]
@@ -83,18 +86,19 @@ namespace Claims.Integration.Tests
             var getClaimResponseContent = await getClaimResponse.Content.ReadAsStringAsync();
             var claim = JsonConvert.DeserializeObject<GetClaimResponse>(getClaimResponseContent)!;
 
-            Assert.Equal(createdClaimResponse.Id, claim.Id); ;
-            Assert.Equal(request.CoverId, claim.CoverId);
-            Assert.Equal(request.Created.Date, claim.Created.Date);
-            Assert.Equal(request.Name, claim.Name);
-            //Assert.Equal(request.Type, claim.Type);
-            Assert.Equal(request.DamageCost, claim.DamageCost);
+            claim.Id.Should().Be(createdClaimResponse.Id);
+            claim.CoverId.Should().Be(request.CoverId);
+            claim.Created.Date.Should().Be(request.Created.Date);
+            claim.Name.Should().Be(request.Name);
+            //claim.Type.Should().Be(request.Type);
+            claim.DamageCost.Should().Be(request.DamageCost);
 
             var removeClaimResponse = await _client.DeleteAsync($"/Claims/{createdClaimResponse.Id}");
             removeClaimResponse.EnsureSuccessStatusCode();
 
             getClaimResponse = await _client.GetAsync($"/Claims/{createdClaimResponse.Id}");
-            Assert.Equal(System.Net.HttpStatusCode.NotFound, getClaimResponse.StatusCode);
+
+            getClaimResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
         }
 
         internal static async Task<(CreateClaimRequest, HttpResponseMessage)> CreateClaimAsync(HttpClient client, string coverId, DateTime? created, decimal damageCost = 50000)

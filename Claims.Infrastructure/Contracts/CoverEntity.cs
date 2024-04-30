@@ -6,7 +6,7 @@ namespace Claims.Infrastructure.Contracts
     public class CoverEntity
     {
         [BsonId]
-        public string Id { get; set; }
+        public required string Id { get; set; }
 
         [BsonElement("startDate")]
         [BsonDateTimeOptions(DateOnly = true)]

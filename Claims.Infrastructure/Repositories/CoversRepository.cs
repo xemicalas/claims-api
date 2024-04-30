@@ -40,12 +40,7 @@ namespace Claims.Infrastructure.Repositories
         {
             var cover = await Covers
                 .Where(cover => cover.Id == id)
-                .SingleOrDefaultAsync();
-
-            if (cover == null)
-            {
-                throw new CoverNotFoundException();
-            }
+                .SingleOrDefaultAsync() ?? throw new CoverNotFoundException();
 
             return cover;
         }

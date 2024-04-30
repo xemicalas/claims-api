@@ -6,7 +6,7 @@ using Mapster;
 namespace Claims.Application.Services
 {
     public class CoversService : ICoversService
-	{
+    {
         private readonly ICoversRepository _coversRepository;
         private readonly IPremiumComputeService _premiumComputeService;
         private readonly IAuditerService _auditerService;

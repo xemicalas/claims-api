@@ -99,13 +99,13 @@ namespace Claims.Integration.Tests
             Assert.Equal(System.Net.HttpStatusCode.NotFound, getCoverResponse.StatusCode);
         }
 
-        internal static async Task<(CreateCoverRequest, HttpResponseMessage)> CreateCoverAsync(HttpClient client, DateTime ?startDate, DateTime ?endDate)
+        internal static async Task<(CreateCoverRequest, HttpResponseMessage)> CreateCoverAsync(HttpClient client, DateTime? startDate, DateTime? endDate)
         {
             CreateCoverRequest request = new()
             {
-                StartDate = startDate.HasValue ? startDate.Value : DateTime.UtcNow.AddHours(1),
-                EndDate = endDate.HasValue ? endDate.Value : DateTime.UtcNow.AddDays(6 * 30),
-                Type = Domain.Contracts.CoverType.PassengerShip,
+                StartDate = startDate ?? DateTime.UtcNow.AddHours(1),
+                EndDate = endDate ?? DateTime.UtcNow.AddDays(6 * 30),
+                Type = CoverType.PassengerShip,
             };
 
             return (request, await client.PostAsync("/Covers", JsonContent.Create(request)));

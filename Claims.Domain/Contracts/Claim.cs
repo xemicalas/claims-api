@@ -13,6 +13,6 @@
         public ClaimType Type { get; set; }
 
         public decimal DamageCost { get; set; }
-	}
+    }
 }
 

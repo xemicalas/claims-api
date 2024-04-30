@@ -5,7 +5,7 @@ namespace Claims.Api.Contracts
     /// Get claim response
     /// </summary>
     public class GetClaimResponse
-	{
+    {
         /// <summary>
         /// Claim identifier
         /// </summary>

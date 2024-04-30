@@ -6,7 +6,7 @@ namespace Claims.Api.Contracts
     /// Get cover response
     /// </summary>
     public class GetCoverResponse
-	{
+    {
         /// <summary>
         /// Cover identifier
         /// </summary>

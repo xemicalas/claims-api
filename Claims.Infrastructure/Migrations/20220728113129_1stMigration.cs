@@ -22,7 +22,7 @@ namespace Claims.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_ClaimAudits", x => x.Id);
                 });
-            
+
             migrationBuilder.CreateTable(
                 name: "CoverAudits",
                 columns: table => new
@@ -43,7 +43,7 @@ namespace Claims.Infrastructure.Migrations
         {
             migrationBuilder.DropTable(
                 name: "ClaimAudits");
-            
+
             migrationBuilder.DropTable(
                 name: "CoverAudits");
         }

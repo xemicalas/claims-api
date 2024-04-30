@@ -40,12 +40,7 @@ namespace Claims.Infrastructure.Repositories
         {
             var claim = await Claims
                 .Where(claim => claim.Id == id)
-                .SingleOrDefaultAsync();
-
-            if (claim == null)
-            {
-                throw new ClaimNotFoundException();
-            }
+                .SingleOrDefaultAsync() ?? throw new ClaimNotFoundException();
 
             return claim;
         }

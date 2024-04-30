@@ -85,7 +85,7 @@ namespace Claims.Application.Services
 
         private decimal ComputePremiumWithDiscount(decimal premiumPerDay, decimal discount, int periodDays)
         {
-            return (premiumPerDay - premiumPerDay * discount) * periodDays;
+            return (premiumPerDay - (premiumPerDay * discount)) * periodDays;
         }
     }
 }

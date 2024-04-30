@@ -11,6 +11,6 @@
         public CoverType Type { get; set; }
 
         public decimal Premium { get; set; }
-	}
+    }
 }
 

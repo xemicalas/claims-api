@@ -35,15 +35,15 @@ public class CoversController : ControllerBase
     /// <summary>
     /// Computes premium by date intervals and coverType
     /// </summary>
-    /// <param name="startDate">Cover's start date</param>
-    /// <param name="endDate">Cover's end date</param>
-    /// <param name="coverType">Cover type</param>
+    /// <param name="request">Compute premium object</param>
     /// <returns>Calculated premium amount</returns>
     /// <response code="200">Returns calculated premium amount</response>
     [HttpPost("/ComputePremium")]
-    public ActionResult ComputePremiumAsync(DateOnly startDate, DateOnly endDate, CoverType coverType)
+    public ActionResult<ComputePremiumResponse> ComputePremiumAsync(ComputePremiumRequest request)
     {
-        return Ok(_premiumComputeService.ComputePremium(startDate, endDate, coverType));
+        var premium = _premiumComputeService.ComputePremium(request.StartDate, request.EndDate, request.CoverType);
+
+        return Ok(new ComputePremiumResponse { Amount = premium });
     }
 
     /// <summary>
@@ -90,7 +90,7 @@ public class CoversController : ControllerBase
     /// <response code="200">When cover is successfully created</response>
     /// <response code="400">When the request is invalid</response>
     [HttpPost]
-    public async Task<ActionResult<string>> CreateAsync(CreateCoverRequest cover)
+    public async Task<ActionResult<CreatedCoverResponse>> CreateAsync(CreateCoverRequest cover)
     {
         var validationResult = _validator.Validate(cover);
         if (!validationResult.IsValid)
@@ -101,7 +101,7 @@ public class CoversController : ControllerBase
 
         var coverId = await _coversService.CreateCoverAsync(cover.Adapt<Cover>());
 
-        return Ok(coverId);
+        return Ok(new CreatedCoverResponse { Id = coverId });
     }
 
     /// <summary>

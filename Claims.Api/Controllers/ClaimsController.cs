@@ -67,7 +67,7 @@ namespace Claims.Api.Controllers
         /// <response code="200">Returns created claim identifier</response>
         /// <response code="400">When the request is invalid</response>
         [HttpPost]
-        public async Task<ActionResult<string>> CreateAsync(CreateClaimRequest claim)
+        public async Task<ActionResult<CreatedClaimResponse>> CreateAsync(CreateClaimRequest claim)
         {
             var validationResult = await _validator.ValidateAsync(claim);
             if (!validationResult.IsValid)
@@ -78,7 +78,7 @@ namespace Claims.Api.Controllers
 
             var claimId = await _claimsService.CreateClaimAsync(claim.Adapt<Claim>());
 
-            return Ok(claimId);
+            return Ok(new CreatedClaimResponse { Id = claimId });
         }
 
         /// <summary>

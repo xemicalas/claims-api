@@ -70,28 +70,30 @@ public class ClaimsControllerTests
     {
         var (_, createCoverResponse) = await CoversControllerTests.CreateCoverAsync(_client, null, null);
         createCoverResponse.EnsureSuccessStatusCode();
-        var coverId = await createCoverResponse.Content.ReadAsStringAsync();
+        var createCoverResponseContent = await createCoverResponse.Content.ReadAsStringAsync();
+        var createdCoverResponse = JsonConvert.DeserializeObject<CreatedCoverResponse>(createCoverResponseContent)!;
 
-        var (request, createClaimResponse) = await CreateClaimAsync(_client, coverId, null);
+        var (request, createClaimResponse) = await CreateClaimAsync(_client, createdCoverResponse.Id, null);
         createClaimResponse.EnsureSuccessStatusCode();
-        var claimId = await createClaimResponse.Content.ReadAsStringAsync();
+        var createClaimResponseContent = await createClaimResponse.Content.ReadAsStringAsync();
+        var createdClaimResponse = JsonConvert.DeserializeObject<CreatedClaimResponse>(createClaimResponseContent)!;
 
-        var getClaimResponse = await _client.GetAsync($"/Claims/{claimId}");
+        var getClaimResponse = await _client.GetAsync($"/Claims/{createdClaimResponse.Id}");
         getClaimResponse.EnsureSuccessStatusCode();
         var getClaimResponseContent = await getClaimResponse.Content.ReadAsStringAsync();
         var claim = JsonConvert.DeserializeObject<GetClaimResponse>(getClaimResponseContent)!;
 
-        Assert.Equal(claimId, claim.Id);
+        Assert.Equal(createdClaimResponse.Id, claim.Id); ;
         Assert.Equal(request.CoverId, claim.CoverId);
         Assert.Equal(request.Created.Date, claim.Created.Date);
         Assert.Equal(request.Name, claim.Name);
         //Assert.Equal(request.Type, claim.Type);
         Assert.Equal(request.DamageCost, claim.DamageCost);
 
-        var removeClaimResponse = await _client.DeleteAsync($"/Claims/{claimId}");
+        var removeClaimResponse = await _client.DeleteAsync($"/Claims/{createdClaimResponse.Id}");
         removeClaimResponse.EnsureSuccessStatusCode();
 
-        getClaimResponse = await _client.GetAsync($"/Claims/{claimId}");
+        getClaimResponse = await _client.GetAsync($"/Claims/{createdClaimResponse.Id}");
         Assert.Equal(System.Net.HttpStatusCode.NotFound, getClaimResponse.StatusCode);
     }
 

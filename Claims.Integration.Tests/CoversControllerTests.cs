@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using Xunit;
 using Newtonsoft.Json;
 using Claims.Api.Contracts;
+using Claims.Domain.Contracts;
 
 namespace Claims.Integration.Tests
 {
@@ -16,6 +17,25 @@ namespace Claims.Integration.Tests
                 .WithWebHostBuilder(_ => { });
 
             _client = application.CreateClient();
+        }
+
+        [Fact]
+        public async Task When_ComputePremium_Expect_Success()
+        {
+            var request = new ComputePremiumRequest
+            {
+                StartDate = DateOnly.FromDateTime(DateTime.UtcNow),
+                EndDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(60)),
+                CoverType = CoverType.ContainerShip
+            };
+
+            var computePremiumResponse = await _client.PostAsync("/ComputePremium", JsonContent.Create(request));
+            computePremiumResponse.EnsureSuccessStatusCode();
+
+            var responseContent = await computePremiumResponse.Content.ReadAsStringAsync();
+            var response = JsonConvert.DeserializeObject<ComputePremiumResponse>(responseContent)!;
+
+            Assert.True(response.Amount > 0);
         }
 
         [Fact]
@@ -57,24 +77,25 @@ namespace Claims.Integration.Tests
             var (request, createCoverResponse) = await CreateCoverAsync(_client, null, null);
             createCoverResponse.EnsureSuccessStatusCode();
 
-            var coverId = await createCoverResponse.Content.ReadAsStringAsync();
+            var createCoverResponseContent = await createCoverResponse.Content.ReadAsStringAsync();
+            var createdCoverResponse = JsonConvert.DeserializeObject<CreatedCoverResponse>(createCoverResponseContent)!;
 
-            var getCoverResponse = await _client.GetAsync($"/Covers/{coverId}");
+            var getCoverResponse = await _client.GetAsync($"/Covers/{createdCoverResponse.Id}");
             getCoverResponse.EnsureSuccessStatusCode();
 
             var getCoverResponseContent = await getCoverResponse.Content.ReadAsStringAsync();
             var cover = JsonConvert.DeserializeObject<GetCoverResponse>(getCoverResponseContent)!;
 
-            Assert.Equal(coverId, cover.Id);
+            Assert.Equal(createdCoverResponse.Id, cover.Id);
             Assert.Equal(request.StartDate.Date, cover.StartDate.Date);
             Assert.Equal(request.EndDate.Date, cover.EndDate.Date);
             //Assert.Equal(request.Type, cover.Type);
             Assert.True(cover.Premium > 0);
 
-            var removeCoverResponse = await _client.DeleteAsync($"/Covers/{coverId}");
+            var removeCoverResponse = await _client.DeleteAsync($"/Covers/{createdCoverResponse.Id}");
             removeCoverResponse.EnsureSuccessStatusCode();
 
-            getCoverResponse = await _client.GetAsync($"/Covers/{coverId}");
+            getCoverResponse = await _client.GetAsync($"/Covers/{createdCoverResponse.Id}");
             Assert.Equal(System.Net.HttpStatusCode.NotFound, getCoverResponse.StatusCode);
         }
 

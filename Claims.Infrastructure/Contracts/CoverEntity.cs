@@ -4,7 +4,7 @@ using MongoDB.Bson.Serialization.Attributes;
 namespace Claims.Infrastructure.Contracts
 {
     public class CoverEntity
-	{
+    {
         [BsonId]
         public string Id { get; set; }
 

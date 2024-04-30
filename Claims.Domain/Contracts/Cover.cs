@@ -1,7 +1,7 @@
 ﻿namespace Claims.Domain.Contracts
 {
     public class Cover
-	{
+    {
         public required string Id { get; set; }
 
         public DateTime StartDate { get; set; }

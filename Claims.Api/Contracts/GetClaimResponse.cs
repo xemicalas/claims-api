@@ -37,4 +37,3 @@ namespace Claims.Api.Contracts
         public decimal DamageCost { get; set; }
     }
 }
-

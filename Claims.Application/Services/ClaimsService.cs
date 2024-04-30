@@ -6,13 +6,13 @@ using Mapster;
 namespace Claims.Application.Services
 {
     public class ClaimsService : IClaimsService
-	{
+    {
         private readonly IClaimsRepository _claimsRepository;
         private readonly IAuditerService _auditerService;
 
         public ClaimsService(IClaimsRepository claimsRepository, IAuditerService auditerService)
-		{
-			_claimsRepository = claimsRepository;
+        {
+            _claimsRepository = claimsRepository;
             _auditerService = auditerService;
         }
 

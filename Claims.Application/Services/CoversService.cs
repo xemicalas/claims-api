@@ -12,7 +12,7 @@ namespace Claims.Application.Services
         private readonly IAuditerService _auditerService;
 
         public CoversService(ICoversRepository coversRepository, IPremiumComputeService premiumComputeService, IAuditerService auditerService)
-		{
+        {
             _coversRepository = coversRepository;
             _premiumComputeService = premiumComputeService;
             _auditerService = auditerService;

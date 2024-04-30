@@ -33,4 +33,3 @@ namespace Claims.Api.Contracts
         public decimal Premium { get; set; }
     }
 }
-

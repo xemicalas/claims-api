@@ -6,12 +6,12 @@ using MongoDB.EntityFrameworkCore.Extensions;
 namespace Claims.Infrastructure.Repositories
 {
     public class CoversRepository : DbContext, ICoversRepository
-	{
+    {
         public DbSet<CoverEntity> Covers { get; init; }
 
         public CoversRepository(DbContextOptions<CoversRepository> options)
             : base(options)
-		{
+        {
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -12,7 +12,6 @@ namespace Claims.Api.Contracts
         /// </summary>
         public required string CoverId { get; set; }
 
-
         /// <summary>
         /// The date when claim was created
         /// </summary>

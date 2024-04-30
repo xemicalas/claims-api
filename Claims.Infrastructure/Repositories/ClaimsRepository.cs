@@ -6,13 +6,13 @@ using MongoDB.EntityFrameworkCore.Extensions;
 namespace Claims.Infrastructure.Repositories
 {
     public class ClaimsRepository : DbContext, IClaimsRepository
-	{
+    {
         private DbSet<ClaimEntity> Claims { get; init; }
 
         public ClaimsRepository(DbContextOptions<ClaimsRepository> options)
             : base(options)
-		{
-		}
+        {
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

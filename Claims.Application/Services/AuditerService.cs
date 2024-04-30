@@ -3,11 +3,11 @@
 namespace Claims.Application.Services
 {
     public class AuditerService : IAuditerService
-	{
+    {
         private readonly IAuditerRepository _auditerRepository;
 
         public AuditerService(IAuditerRepository auditerRepository)
-		{
+        {
             _auditerRepository = auditerRepository;
         }
 

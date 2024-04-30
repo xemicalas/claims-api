@@ -4,7 +4,7 @@ using Claims.Infrastructure.Contracts;
 namespace Claims.Infrastructure.Repositories
 {
     public class AuditerRepository : IAuditerRepository
-	{
+    {
         private readonly AuditContext _auditContext;
 
         public AuditerRepository(AuditContext auditContext)

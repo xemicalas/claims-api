@@ -14,25 +14,15 @@ namespace Claims.Application.Services
         public Task AuditClaimAsync(string id, string httpRequestType)
         {
             // For improvement: could use asynchronouse messaging platform like RabbitMQ, NSQ, etc..
-            Task.Factory.StartNew(() => AuditClaim(id, httpRequestType));
+            Task.Factory.StartNew(async () => await _auditerRepository.AuditClaimAsync(id, httpRequestType));
             return Task.CompletedTask;
         }
 
         public Task AuditCoverAsync(string id, string httpRequestType)
         {
             // For improvement: could use asynchronouse messaging platform like RabbitMQ, NSQ, etc..
-            Task.Factory.StartNew(() => AuditCover(id, httpRequestType));
+            Task.Factory.StartNew(async () => await _auditerRepository.AuditCoverAsync(id, httpRequestType));
             return Task.CompletedTask;
-        }
-
-        private void AuditClaim(string id, string httpRequestType)
-        {
-            _auditerRepository.AuditClaim(id, httpRequestType);
-        }
-
-        private void AuditCover(string id, string httpRequestType)
-        {
-            _auditerRepository.AuditCover(id, httpRequestType);
         }
     }
 }
